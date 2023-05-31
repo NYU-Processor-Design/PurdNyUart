@@ -1,0 +1,13 @@
+{
+  "name": "pernyuart",
+  "version": "1.0.0",
+  "description": "Purdue + NYU UART",
+  "homepage": "https://github.com/NYU-Processor-Design/PerNyUart",
+  "maintainers": [],
+  "license": "CC0-1.0",
+  "dependencies": [
+    "nyu-cmake",
+    "nyu-util",
+    "catch2"
+  ]
+}
