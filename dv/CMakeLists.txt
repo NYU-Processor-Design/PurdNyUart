@@ -2,14 +2,16 @@ find_package(Catch2 3 REQUIRED CONFIG)
 find_package(nyu-util REQUIRED CONFIG)
 
 add_executable(tests)
+
+add_subdirectory(BaudRateGen)
+
 target_sources(tests PRIVATE
   Uart.cpp
-  BaudRateGen.cpp
-  BaudRateGen4.cpp
+  UartRx.cpp
 )
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
-  TOP_MODULES Uart BaudRateGen BaudRateGen4
+  TOP_MODULES Uart UartRx BaudRateGen BaudRateGen4 BaudRateGenVar
   ARGS COVERAGE
 )
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain nyu::covrecorder)
