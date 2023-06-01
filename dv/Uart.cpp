@@ -2,7 +2,7 @@
 #include <VUart.h>
 
 
-TEST_CASE("Test") {
+TEST_CASE("Uart") {
   VUart dut;
   REQUIRE(1);
 }
