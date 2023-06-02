@@ -1,5 +1,6 @@
 module EdgeSync (
     input clk,
+    input nReset,
 
     input in,
 
@@ -10,13 +11,19 @@ module EdgeSync (
 );
   logic sync, cmp;
 
-  assign rise = (out == 1) && (cmp == 0);
-  assign fall = (out == 0) && (cmp == 1);
+  assign rise = out & ~cmp;
+  assign fall = ~out & cmp;
 
-  always_ff @(posedge clk) begin
-    cmp  <= out;
-    out  <= sync;
-    sync <= in;
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      cmp  <= 0;
+      out  <= 0;
+      sync <= 0;
+    end else begin
+      cmp  <= out;
+      out  <= sync;
+      sync <= in;
+    end
   end
 
 endmodule
