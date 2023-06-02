@@ -7,6 +7,7 @@ constexpr unsigned Oversample = 16;
 
 constexpr unsigned rxRate = ClockRate / (2 * BaudRate * Oversample);
 constexpr unsigned txRate = ClockRate / (2 * BaudRate);
+constexpr unsigned deltaRate = txRate % rxRate;
 
 static void reset(VBaudRateGen& rg, int phase = 0) {
   rg.phase = !!phase;
@@ -71,4 +72,28 @@ TEST_CASE("BaudRateGen, txClk") {
 
   tick(rg);
   REQUIRE(rg.txClk == 0);
+}
+
+TEST_CASE("BaudRateGen, rx/tx sync") {
+  VBaudRateGen rg;
+  reset(rg);
+
+  for(unsigned i {0}; i < txRate - deltaRate; ++i)
+    tick(rg);
+
+  unsigned rxClkStatus = rg.rxClk;
+  REQUIRE(rg.txClk == 0);
+
+
+  for(unsigned i {0}; i < deltaRate; ++i) {
+    tick(rg);
+
+    REQUIRE(rg.rxClk == rxClkStatus);
+    REQUIRE(rg.txClk == 0);
+  }
+
+  tick(rg);
+
+  REQUIRE(rg.rxClk == !rxClkStatus);
+  REQUIRE(rg.txClk == 1);
 }

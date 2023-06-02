@@ -28,18 +28,23 @@ module BaudRateGen #(
       txCount <= txWidth'(txRate);
     end else begin
 
-      if (rxCount == 0) begin
+      // verilog_format: off
+      if (rxCount > 0) begin
+        rxCount <= rxCount - 1;
+      end else if (
+        (txCount > txWidth'(rxRate)) ||
+        (txCount == 0)
+      ) begin
         rxCount <= rxWidth'(rxRate);
         rxClk   <= ~rxClk;
-      end else begin
-        rxCount <= rxCount - 1;
       end
+      // verilog_format: on
 
-      if (txCount == 0) begin
+      if (txCount > 0) begin
+        txCount <= txCount - 1;
+      end else begin
         txCount <= txWidth'(txRate);
         txClk   <= ~txClk;
-      end else begin
-        txCount <= txCount - 1;
       end
     end
 

@@ -91,3 +91,32 @@ TEST_CASE("BaudRateGenVar, txClk") {
     REQUIRE(rg.txClk == 0);
   }
 }
+
+TEST_CASE("BaudRateGenVar, rx/tx sync") {
+  VBaudRateGenVar rg;
+
+  for(std::uint16_t i {1 << rxShift}; i < (1 << txWidth); i <<= 1) {
+    rg.count = i;
+    reset(rg);
+
+    unsigned deltaRate {i % (unsigned) (i >> rxShift)};
+
+    for(unsigned j {0}; j < i - deltaRate; ++j)
+      tick(rg);
+
+    unsigned rxClkStatus = rg.rxClk;
+    REQUIRE(rg.txClk == 0);
+
+    for(unsigned j {0}; j < deltaRate; ++j) {
+      tick(rg);
+
+      REQUIRE(rg.rxClk == rxClkStatus);
+      REQUIRE(rg.txClk == 0);
+    }
+
+    tick(rg);
+
+    REQUIRE(rg.rxClk == !rxClkStatus);
+    REQUIRE(rg.txClk == 1);
+  }
+}

@@ -1,5 +1,3 @@
-#include <utility>
-
 #include <catch2/catch_test_macros.hpp>
 #include <VBaudRateGen4.h>
 
@@ -23,6 +21,14 @@ static void tick(VBaudRateGen4& rg) {
   rg.eval();
 }
 
+static unsigned selRx(unsigned sel) {
+  return ClockRate / (2 * Bauds[sel] * Oversample);
+}
+
+static unsigned selTx(unsigned sel) {
+  return ClockRate / (2 * Bauds[sel]);
+}
+
 TEST_CASE("BaudRateGen4, Reset") {
   VBaudRateGen4 rg;
   reset(rg, 0);
@@ -43,7 +49,7 @@ TEST_CASE("BaudRateGen4, rxClk") {
     rg.sel = sel;
     reset(rg);
 
-    unsigned rate {ClockRate / (2 * Bauds[sel] * Oversample)};
+    unsigned rate {selRx(sel)};
 
     for(unsigned i {0}; i < rate; ++i) {
       tick(rg);
@@ -68,7 +74,7 @@ TEST_CASE("BaudRateGen4, txClk") {
     rg.sel = sel;
     reset(rg);
 
-    unsigned rate {ClockRate / (2 * Bauds[sel])};
+    unsigned rate {selTx(sel)};
 
     for(unsigned i {0}; i < rate; ++i) {
       tick(rg);
@@ -82,5 +88,36 @@ TEST_CASE("BaudRateGen4, txClk") {
 
     tick(rg);
     REQUIRE(rg.txClk == 0);
+  }
+}
+
+TEST_CASE("BaudRateGen4, rx/tx sync") {
+  VBaudRateGen4 rg;
+
+  for(unsigned sel {0}; sel < 4; ++sel) {
+    rg.sel = sel;
+    reset(rg);
+
+    unsigned txRate {selTx(sel)};
+    unsigned deltaRate {txRate % selRx(sel)};
+
+    for(unsigned i {0}; i < txRate - deltaRate; ++i)
+      tick(rg);
+
+    unsigned rxClkStatus = rg.rxClk;
+    REQUIRE(rg.txClk == 0);
+
+
+    for(unsigned i {0}; i < deltaRate; ++i) {
+      tick(rg);
+
+      REQUIRE(rg.rxClk == rxClkStatus);
+      REQUIRE(rg.txClk == 0);
+    }
+
+    tick(rg);
+
+    REQUIRE(rg.rxClk == !rxClkStatus);
+    REQUIRE(rg.txClk == 1);
   }
 }
