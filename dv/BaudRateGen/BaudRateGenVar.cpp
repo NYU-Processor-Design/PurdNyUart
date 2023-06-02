@@ -1,6 +1,8 @@
 #include <cstdint>
 
 #include <catch2/catch_test_macros.hpp>
+#include <NyuTestUtil.hpp>
+
 #include <VBaudRateGenVar.h>
 
 static constexpr unsigned flog2(unsigned x) {
@@ -21,18 +23,7 @@ constexpr unsigned rxWidth = txWidth - rxShift;
 
 static void reset(VBaudRateGenVar& rg, int phase = 0) {
   rg.phase = !!phase;
-  rg.nReset = 1;
-  rg.eval();
-  rg.nReset = 0;
-  rg.eval();
-  rg.nReset = 1;
-}
-
-static void tick(VBaudRateGenVar& rg) {
-  rg.clk = 0;
-  rg.eval();
-  rg.clk = 1;
-  rg.eval();
+  nyu::reset(rg);
 }
 
 TEST_CASE("BaudRateGenVar, Reset") {
@@ -56,16 +47,16 @@ TEST_CASE("BaudRateGenVar, rxClk") {
     reset(rg);
 
     for(unsigned j {0}; j < i; ++j) {
-      tick(rg);
+      nyu::tick(rg);
       REQUIRE(rg.rxClk == 0);
     }
 
     for(unsigned j {0}; j <= i; ++j) {
-      tick(rg);
+      nyu::tick(rg);
       REQUIRE(rg.rxClk == 1);
     }
 
-    tick(rg);
+    nyu::tick(rg);
     REQUIRE(rg.rxClk == 0);
   }
 }
@@ -78,16 +69,16 @@ TEST_CASE("BaudRateGenVar, txClk") {
     reset(rg);
 
     for(unsigned j {0}; j < i; ++j) {
-      tick(rg);
+      nyu::tick(rg);
       REQUIRE(rg.txClk == 0);
     }
 
     for(unsigned j {0}; j <= i; ++j) {
-      tick(rg);
+      nyu::tick(rg);
       REQUIRE(rg.txClk == 1);
     }
 
-    tick(rg);
+    nyu::tick(rg);
     REQUIRE(rg.txClk == 0);
   }
 }
@@ -102,19 +93,19 @@ TEST_CASE("BaudRateGenVar, rx/tx sync") {
     unsigned deltaRate {i % (unsigned) (i >> rxShift)};
 
     for(unsigned j {0}; j < i - deltaRate; ++j)
-      tick(rg);
+      nyu::tick(rg);
 
     unsigned rxClkStatus = rg.rxClk;
     REQUIRE(rg.txClk == 0);
 
     for(unsigned j {0}; j < deltaRate; ++j) {
-      tick(rg);
+      nyu::tick(rg);
 
       REQUIRE(rg.rxClk == rxClkStatus);
       REQUIRE(rg.txClk == 0);
     }
 
-    tick(rg);
+    nyu::tick(rg);
 
     REQUIRE(rg.rxClk == !rxClkStatus);
     REQUIRE(rg.txClk == 1);

@@ -1,18 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
-#include <VEdgeSync.h>
+#include <NyuTestUtil.hpp>
 
-static void tick(VEdgeSync& es, unsigned cycles = 1) {
-  for(unsigned i {0}; i < cycles; ++i) {
-    es.clk = 0;
-    es.eval();
-    es.clk = 1;
-    es.eval();
-  }
-}
+#include <VEdgeSync.h>
 
 static void reset(VEdgeSync& es) {
   es.in = 0;
-  tick(es, 3);
+  nyu::tick(es, 3);
 }
 
 TEST_CASE("EdgeSync, input") {
@@ -20,13 +13,13 @@ TEST_CASE("EdgeSync, input") {
   reset(es);
 
   es.in = 1;
-  tick(es);
+  nyu::tick(es);
   es.in = 0;
 
-  tick(es);
+  nyu::tick(es);
   REQUIRE(es.out == 1);
 
-  tick(es);
+  nyu::tick(es);
   REQUIRE(es.out == 0);
 }
 
@@ -35,21 +28,21 @@ TEST_CASE("EdgeSync, rise/fall") {
   reset(es);
 
   es.in = 1;
-  tick(es);
+  nyu::tick(es);
   es.in = 0;
 
   REQUIRE(es.rise == 0);
   REQUIRE(es.fall == 0);
 
-  tick(es);
+  nyu::tick(es);
   REQUIRE(es.rise == 1);
   REQUIRE(es.fall == 0);
 
-  tick(es);
+  nyu::tick(es);
   REQUIRE(es.rise == 0);
   REQUIRE(es.fall == 1);
 
-  tick(es);
+  nyu::tick(es);
   REQUIRE(es.rise == 0);
   REQUIRE(es.fall == 0);
 }
