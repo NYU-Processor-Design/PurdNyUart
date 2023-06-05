@@ -1,0 +1,22 @@
+{
+  "signal": [
+    {
+      "name": "clk",
+      "wave": "n............."
+    },
+    {
+      "name": "rxClk",
+      "wave": "l.nh..pl.nh..p"
+    },
+    {
+      "name": "txClk",
+      "wave": "l.....nh.....p"
+    }
+  ],
+  "foot": {
+    "tock": 1
+  },
+  "config": {
+    "skin": "dark"
+  }
+}
