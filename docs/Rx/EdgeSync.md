@@ -1,4 +1,4 @@
-# Edge Synchronization
+# Edge Synchronizer
 
 The edge synchronizer is a 2-bit synchronizer and an edge detector combined into
 a single module.
