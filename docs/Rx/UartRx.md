@@ -29,7 +29,7 @@ protocol with some synchronization and error detection features.
 |    Name    |  Width  |                 Description                   |
 |    :--:    |  :---:  |                 :---------:                   |
 |   `data`   |    8    | Received byte                                 |
-|   `done`   |    1    | Byte read complete, `done` updated            |
+|   `done`   |    1    | Byte read complete, `data` updated            |
 |   `err`    |    1    | Read error occurred                           |
 
 ## Functionality
@@ -79,3 +79,27 @@ The important control signals are as follows:
 | `badSync`     | `edgeDetect && edgeCmp && (sampleCount >= halfSampleCount)` | Synchronization error  |
 | `reSync`      | `edgeDetect && (sampleCount < halfSampleCount)` | Synchronization correction |
 | `advance`     | `reSync \|\| (sampleCount == 0)` | Advance to next state                    |
+
+### Complete FSM Diagram
+
+```mermaid
+graph LR;
+  Idle--fall-->Start;
+
+  Start--badSync-->Error;
+  Start--advance-->Data_A;
+
+  Data_A--badSync-->Error;
+  Data_A--advance && readCount > 0 -->Data_B;
+  Data_A--advance && readCount == 0 -->Stop;
+
+  Data_B--badSync-->Error;
+  Data_B--advance && readCount > 0 -->Data_A;
+  Data_B--advance && readCount == 0 -->Stop;
+
+  Stop--"badSync || (rise && sampleCount <= halfSampleCount)"-->Error;
+  Stop--fall && sampleCount > halfSampleCount-->Start;
+  Stop--advance-->Idle;
+
+  Error-->Idle;
+```

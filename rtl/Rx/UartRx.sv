@@ -7,8 +7,9 @@ module UartRx #(
     input in,
 
     output logic [7:0] data,
-    output logic done,
-    output logic err
+
+    output done,
+    output err
 );
 
   localparam sampleWidth = $clog2(Oversample);
@@ -43,6 +44,8 @@ module UartRx #(
     badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
     reSync = edgeDetect && (sampleCount < halfSampleCount);
     advance = reSync || (sampleCount == 0);
+    done = advance && (readCount == 0);
+    err = nextState == ERROR;
   end
 
   logic [sampleWidth-1:0] sampleCount;
@@ -73,13 +76,10 @@ module UartRx #(
     if (!nReset) begin
       readCount <= 8;
       data <= 0;
-      done <= 0;
     end else begin
+
       if (readCount == 0) begin
         data <= readBuf;
-        done <= 1;
-      end else begin
-        done <= 0;
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
@@ -88,14 +88,7 @@ module UartRx #(
         readCount <= readCount - 1;
         readBuf   <= {readBuf[6:0], syncOut};
       end
-    end
-  end
 
-  always_ff @(posedge clk, negedge nReset) begin
-    if (!nReset || nextState != ERROR) begin
-      err <= 0;
-    end else begin
-      err <= 1;
     end
   end
 
