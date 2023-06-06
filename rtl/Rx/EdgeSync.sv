@@ -4,10 +4,9 @@ module EdgeSync (
 
     input in,
 
+    output logic out,
     output rise,
-    output fall,
-
-    output logic out
+    output fall
 );
   logic sync, cmp;
 
