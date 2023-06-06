@@ -80,14 +80,14 @@ The resulting `rxClk` is illustrated below:
   <img src="https://svg.wavedrom.com/github/NYU-Processor-Design/PurdNyUart/main/docs/waveforms/rxClkLight.json">
 </picture>
 
-`txClk` is the same except with a 88 cycle period.
+`txClk` is the same except with an 88 cycle period.
 
 ### Synchronization
 
 `rxClk` is synchronized to `txClk`, it will hold on half-periods to ensure that
 its overall period is an even division of `txClk`.
 
-For example, if `rxCycles` is 3 and the `txCycles` is 7 the resulting waveform
+For example, if `rxCycles` is 3 and `txCycles` is 7 the resulting waveform
 would be:
 
 <picture>
