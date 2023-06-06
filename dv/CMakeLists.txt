@@ -8,7 +8,7 @@ add_subdirectory(Rx)
 
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
-  TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar EdgeSync
+  TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar EdgeSync UartRx
   ARGS COVERAGE
 )
 target_link_libraries(tests PRIVATE
