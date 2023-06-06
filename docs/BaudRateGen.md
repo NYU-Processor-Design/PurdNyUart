@@ -14,7 +14,7 @@ provides three such generators:
 * [Inputs](#inputs)
 * [Outputs](#outputs)
 * [Functionality](#functionality)
-  * [Basic](#basics)
+  * [Basics](#basics)
   * [Synchronization](#synchronization)
 
 ## Parameters
