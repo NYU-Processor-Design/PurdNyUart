@@ -130,7 +130,11 @@ module UartRx #(
       end
 
       STOP:
-      if (badSync || (rise && sampleCount <= halfSampleCount)) begin
+      if (
+        badSync ||
+        (rise && sampleCount <= halfSampleCount) ||
+        (syncOut == 1 && sampleCount == halfSampleCount)
+      ) begin
         nextState = ERROR;
       end else if (fall && sampleCount > halfSampleCount) begin
         nextState = START;
