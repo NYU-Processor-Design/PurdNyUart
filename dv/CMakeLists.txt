@@ -5,11 +5,12 @@ add_executable(tests)
 
 add_subdirectory(BaudRateGen)
 
-target_sources(tests PRIVATE EdgeSync.cpp UartRx.cpp)
+target_sources(tests PRIVATE EdgeSync.cpp UartRx.cpp UartTx.cpp)
 
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
-  TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar EdgeSync UartRx
+  TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar
+  EdgeSync UartRx UartTx
   ARGS COVERAGE
 )
 target_link_libraries(tests PRIVATE

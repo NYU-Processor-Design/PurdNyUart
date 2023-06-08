@@ -5,7 +5,7 @@ module UartTx (
     input logic [7:0] data,
     input valid,
 
-    output logic out,
+    output out,
 
     output busy,
     output done
