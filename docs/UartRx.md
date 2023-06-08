@@ -103,3 +103,5 @@ graph LR;
 
   Error-->Idle;
 ```
+
+### Typical Read Cycle

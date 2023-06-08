@@ -1,2 +1,6 @@
 add_subdirectory(BaudRateGen)
-add_subdirectory(Rx)
+
+nyu_add_sv(uart
+  EdgeSync.sv
+  UartRx.sv
+)
