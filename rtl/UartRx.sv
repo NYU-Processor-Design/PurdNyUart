@@ -86,7 +86,7 @@ module UartRx #(
         readCount <= 8;
       end else if (sampleCount == halfSampleCount) begin
         readCount <= readCount - 1;
-        readBuf   <= {readBuf[6:0], syncOut};
+        readBuf   <= {syncOut, readBuf[7:1]};
       end
 
     end
