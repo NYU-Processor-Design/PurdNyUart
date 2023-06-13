@@ -97,8 +97,8 @@ graph LR;
   Data_B--advance && readCount > 0 -->Data_A;
   Data_B--advance && readCount == 0 -->Stop;
 
-  Stop--"badSync || (rise && sampleCount <= halfSampleCount)"-->Error;
-  Stop--fall && sampleCount > halfSampleCount-->Start;
+  Stop--"badSync || (syncOut == 0 && sampleCount == halfSampleCount)"-->Error;
+  Stop--fall && sampleCount < halfSampleCount-->Start;
   Stop--advance-->Idle;
 
   Error-->Idle;
