@@ -93,13 +93,14 @@ module UartRx #(
   end
 
   always_comb begin
+
+    nextState = curState;
+
     case (curState)
 
       IDLE:
       if (fall) begin
         nextState = START;
-      end else begin
-        nextState = curState;
       end
 
       START:
@@ -107,8 +108,6 @@ module UartRx #(
         nextState = ERROR;
       end else if (advance) begin
         nextState = DATA_A;
-      end else begin
-        nextState = curState;
       end
 
       DATA_A:
@@ -116,8 +115,6 @@ module UartRx #(
         nextState = ERROR;
       end else if (advance) begin
         nextState = readCount > 0 ? DATA_B : STOP;
-      end else begin
-        nextState = curState;
       end
 
       DATA_B:
@@ -125,8 +122,6 @@ module UartRx #(
         nextState = ERROR;
       end else if (advance) begin
         nextState = readCount > 0 ? DATA_A : STOP;
-      end else begin
-        nextState = curState;
       end
 
       STOP:
@@ -140,8 +135,6 @@ module UartRx #(
         nextState = START;
       end else if (advance) begin
         nextState = IDLE;
-      end else begin
-        nextState = curState;
       end
 
       ERROR: nextState = IDLE;
