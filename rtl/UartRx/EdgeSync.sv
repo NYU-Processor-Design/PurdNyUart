@@ -2,6 +2,7 @@ module EdgeSync (
     input clk,
     input nReset,
 
+    input phase,
     input in,
 
     output logic out,
@@ -15,9 +16,9 @@ module EdgeSync (
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
-      cmp  <= 0;
-      out  <= 0;
-      sync <= 0;
+      cmp  <= phase;
+      out  <= phase;
+      sync <= phase;
     end else begin
       cmp  <= out;
       out  <= sync;

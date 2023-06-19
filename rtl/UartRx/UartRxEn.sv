@@ -1,9 +1,10 @@
-module UartRx #(
+module UartRxEn #(
     int Oversample = 16
 ) (
     input clk,
     input nReset,
 
+    input en,
     input in,
 
     output logic [7:0] data,
@@ -29,9 +30,10 @@ module UartRx #(
 
   logic rise, fall, syncOut;
 
-  EdgeSync es (
+  EdgeSyncEn es (
       .*,
-      .out(syncOut)
+      .phase(1),
+      .out  (syncOut)
   );
 
   logic edgeDetect;
@@ -63,8 +65,8 @@ module UartRx #(
         edgeCmp     <= edgeDetect;
         sampleCount <= fullSampleCount;
       end else begin
-        edgeCmp     <= edgeDetect ? edgeDetect : edgeCmp;
-        sampleCount <= sampleCount - 1;
+        edgeCmp     <= edgeDetect && en ? edgeDetect : edgeCmp;
+        sampleCount <= en ? sampleCount - 1 : sampleCount;
       end
     end
   end
@@ -79,14 +81,14 @@ module UartRx #(
     end else begin
 
       if (readCount == 0) begin
-        data <= readBuf;
+        data <= en ? readBuf : data;
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
         readCount <= 8;
       end else if (sampleCount == halfSampleCount) begin
-        readCount <= readCount - 1;
-        readBuf   <= {syncOut, readBuf[7:1]};
+        readCount <= en ? readCount - 1 : readCount;
+        readBuf   <= en ? {syncOut, readBuf[7:1]} : readBuf;
       end
 
     end

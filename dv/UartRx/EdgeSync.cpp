@@ -3,23 +3,38 @@
 
 #include <VEdgeSync.h>
 
+static void reset(VEdgeSync& es, unsigned phase = 1) {
+  es.phase = !!phase;
+  nyu::reset(es);
+}
+
 TEST_CASE("EdgeSync, reset") {
   VEdgeSync es;
-  nyu::reset(es);
+  reset(es);
 
-  es.in = 1;
+  es.in = 0;
   nyu::tick(es, 3);
 
-  REQUIRE(es.out == 1);
-
-  nyu::reset(es);
-
   REQUIRE(es.out == 0);
+
+  reset(es);
+
+  REQUIRE(es.out == 1);
+}
+
+TEST_CASE("EdgeSync, phase") {
+  VEdgeSync es;
+
+  reset(es, 0);
+  REQUIRE(es.out == 0);
+
+  reset(es, 1);
+  REQUIRE(es.out == 1);
 }
 
 TEST_CASE("EdgeSync, input") {
   VEdgeSync es;
-  nyu::reset(es);
+  reset(es);
 
   es.in = 1;
   nyu::tick(es);
@@ -34,7 +49,7 @@ TEST_CASE("EdgeSync, input") {
 
 TEST_CASE("EdgeSync, rise/fall") {
   VEdgeSync es;
-  nyu::reset(es);
+  reset(es, 0);
 
   es.in = 1;
   nyu::tick(es);
