@@ -51,13 +51,16 @@ TEST_CASE("BaudRateGenVar, rxClk") {
       REQUIRE(rg.rxClk == 0);
     }
 
-    for(unsigned j {0}; j <= i; ++j) {
+    nyu::tick(rg);
+    REQUIRE(rg.rxClk == 1);
+
+    for(unsigned j {0}; j < i; ++j) {
       nyu::tick(rg);
-      REQUIRE(rg.rxClk == 1);
+      REQUIRE(rg.rxClk == 0);
     }
 
     nyu::tick(rg);
-    REQUIRE(rg.rxClk == 0);
+    REQUIRE(rg.rxClk == 1);
   }
 }
 
@@ -73,13 +76,16 @@ TEST_CASE("BaudRateGenVar, txClk") {
       REQUIRE(rg.txClk == 0);
     }
 
-    for(unsigned j {0}; j <= i; ++j) {
+    nyu::tick(rg);
+    REQUIRE(rg.txClk == 1);
+
+    for(unsigned j {0}; j < i; ++j) {
       nyu::tick(rg);
-      REQUIRE(rg.txClk == 1);
+      REQUIRE(rg.txClk == 0);
     }
 
     nyu::tick(rg);
-    REQUIRE(rg.txClk == 0);
+    REQUIRE(rg.txClk == 1);
   }
 }
 
@@ -95,19 +101,16 @@ TEST_CASE("BaudRateGenVar, rx/tx sync") {
     for(unsigned j {0}; j < i - deltaRate; ++j)
       nyu::tick(rg);
 
-    unsigned rxClkStatus = rg.rxClk;
-    REQUIRE(rg.txClk == 0);
-
     for(unsigned j {0}; j < deltaRate; ++j) {
       nyu::tick(rg);
 
-      REQUIRE(rg.rxClk == rxClkStatus);
+      REQUIRE(rg.rxClk == 0);
       REQUIRE(rg.txClk == 0);
     }
 
     nyu::tick(rg);
 
-    REQUIRE(rg.rxClk == !rxClkStatus);
+    REQUIRE(rg.rxClk == 1);
     REQUIRE(rg.txClk == 1);
   }
 }
