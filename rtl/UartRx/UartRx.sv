@@ -17,7 +17,7 @@ module UartRx #(
   localparam halfSampleCount = sampleWidth'((Oversample / 2) - 1);
 
   // verilog_format: off
-  enum {
+  enum logic [2:0] {
     IDLE,
     START,
     DATA_A,
@@ -134,7 +134,8 @@ module UartRx #(
         nextState = IDLE;
       end
 
-      ERROR: nextState = IDLE;
+      // ERROR
+      default: nextState = IDLE;
 
     endcase
   end
