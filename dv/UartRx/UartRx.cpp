@@ -78,6 +78,19 @@ TEST_CASE("UartRx, resync") {
   REQUIRE(rx.done == 1);
 }
 
+void check_data_error(VUartRx& rx) {
+  rx.in = 1;
+  nyu::tick(rx);
+  rx.in = 0;
+  nyu::tick(rx);
+  rx.in = 1;
+
+  nyu::tick(rx);
+  REQUIRE(rx.err == 1);
+  nyu::tick(rx);
+  REQUIRE(rx.err == 0);
+}
+
 TEST_CASE("UartRx, error") {
   VUartRx rx;
 
@@ -91,19 +104,27 @@ TEST_CASE("UartRx, error") {
   REQUIRE(rx.err == 1);
 
   start(rx);
+  check_data_error(rx);
 
-  rx.in = 1;
-  nyu::tick(rx);
-  rx.in = 0;
-  nyu::tick(rx);
-  rx.in = 1;
-
-  nyu::tick(rx);
-  REQUIRE(rx.err == 1);
-  nyu::tick(rx);
-  REQUIRE(rx.err == 0);
+  start(rx);
+  nyu::tick(rx, 9);
+  check_data_error(rx);
 
   start_transmit(rx, 0);
   nyu::tick(rx, 9);
   REQUIRE(rx.err == 1);
+}
+
+TEST_CASE("UartRx, idle") {
+  VUartRx rx;
+  nyu::reset(rx);
+
+  start_transmit(rx, 0xAA);
+  nyu::tick(rx, Oversample + 1);
+  REQUIRE(rx.data == 0xAA);
+
+  start_transmit(rx, 0x55);
+  rx.in = 1;
+  nyu::tick(rx, Oversample + 1);
+  REQUIRE(rx.data == 0x55);
 }
