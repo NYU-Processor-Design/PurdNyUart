@@ -86,3 +86,19 @@ TEST_CASE("UartTxEn, data") {
   nyu::tick(tx);
   REQUIRE(tx.out == 1);
 }
+
+TEST_CASE("UartTxEn, async valid") {
+  VUartTxEn tx;
+
+  reset(tx);
+  tx.en = 0;
+  send(tx, 0);
+  REQUIRE(tx.busy == 0);
+  REQUIRE(tx.out == 1);
+
+  tx.en = 1;
+  nyu::tick(tx);
+
+  REQUIRE(tx.busy == 1);
+  REQUIRE(tx.out == 0);
+}
