@@ -42,7 +42,7 @@ TEST_CASE("BaudRateGenVar, Reset") {
 TEST_CASE("BaudRateGenVar, rxClk") {
   VBaudRateGenVar rg;
 
-  for(std::uint16_t i {1}; i < (1 << rxWidth); i <<= 1) {
+  for(std::uint16_t i {1}; i <= (1 << rxWidth); i <<= 1) {
     rg.count = i << rxShift;
     reset(rg);
 
