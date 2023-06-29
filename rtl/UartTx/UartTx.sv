@@ -12,20 +12,21 @@ module UartTx (
 );
 
   // verilog_format: off
-  enum {
+  enum logic [1:0] {
     IDLE,
     START,
     DATA,
     STOP
-  } curState , nextState;
+  } curState, nextState;
   // verilog_format: on
 
   logic [7:0] writeBuf;
   logic [3:0] writeCount;
+  logic enterStart;
 
   always_comb begin
-    done = writeCount == 0;
-    busy = curState != IDLE;
+    done = nextState == STOP;
+    busy = nextState != IDLE;
   end
 
   always_comb begin
@@ -43,12 +44,18 @@ module UartTx (
       curState   <= IDLE;
       writeCount <= 8;
       writeBuf   <= 0;
+      enterStart <= 0;
     end else begin
       curState <= nextState;
 
-      if (!busy && valid) begin
+      if ((nextState == STOP || nextState == IDLE) && valid) begin
+        enterStart <= 1;
         writeCount <= 8;
         writeBuf   <= data;
+      end
+
+      if (nextState == START) begin
+        enterStart <= 0;
       end
 
       if (nextState == DATA) begin
@@ -61,13 +68,13 @@ module UartTx (
 
   always_comb begin
     case (curState)
-      IDLE: nextState = valid ? START : curState;
+      IDLE: nextState = enterStart ? START : curState;
 
       START: nextState = DATA;
 
       DATA: nextState = |writeCount ? curState : STOP;
 
-      STOP: nextState = IDLE;
+      STOP: nextState = enterStart ? START : IDLE;
     endcase
   end
 
