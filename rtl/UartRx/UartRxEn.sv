@@ -15,7 +15,7 @@ module UartRxEn #(
 
   localparam sampleWidth = $clog2(Oversample);
   localparam fullSampleCount = sampleWidth'(Oversample - 1);
-  localparam halfSampleCount = sampleWidth'((Oversample / 2) - 1);
+  localparam halfSampleCount = sampleWidth'(Oversample / 2);
 
   // verilog_format: off
   enum logic [2:0] {

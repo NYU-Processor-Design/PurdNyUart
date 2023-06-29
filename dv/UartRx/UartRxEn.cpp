@@ -55,10 +55,12 @@ TEST_CASE("UartRxEn, done") {
   reset(rx);
 
   start_transmit(rx, 0);
+  rx.in = 1;
 
   nyu::tick(rx);
-
   REQUIRE(rx.done == 1);
+  nyu::tick(rx);
+  REQUIRE(rx.done == 0);
 }
 
 TEST_CASE("UartRxEn, enable off") {
@@ -94,4 +96,34 @@ TEST_CASE("UartRxEn, resync") {
   nyu::tick(rx, 2);
   REQUIRE(rx.data == 0x55);
   REQUIRE(rx.done == 1);
+}
+
+TEST_CASE("UartRxEn, error") {
+  VUartRxEn rx;
+
+  reset(rx);
+
+  start(rx, 1);
+
+  rx.in = 1;
+  nyu::tick(rx, 2);
+
+  REQUIRE(rx.err == 1);
+
+  start(rx);
+
+  rx.in = 1;
+  nyu::tick(rx);
+  rx.in = 0;
+  nyu::tick(rx);
+  rx.in = 1;
+
+  nyu::tick(rx);
+  REQUIRE(rx.err == 1);
+  nyu::tick(rx);
+  REQUIRE(rx.err == 0);
+
+  start_transmit(rx, 0);
+  nyu::tick(rx, 9);
+  REQUIRE(rx.err == 1);
 }
