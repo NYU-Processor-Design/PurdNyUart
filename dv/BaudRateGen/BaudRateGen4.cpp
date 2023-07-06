@@ -13,11 +13,11 @@ static void reset(VBaudRateGen4& rg, int phase = 0) {
 }
 
 static unsigned selRx(unsigned sel) {
-  return ClockRate / (Bauds[sel] * Oversample);
+  return ClockRate / (Bauds[sel] * Oversample) - 1;
 }
 
 static unsigned selTx(unsigned sel) {
-  return ClockRate / Bauds[sel];
+  return ClockRate / Bauds[sel] - 1;
 }
 
 TEST_CASE("BaudRateGen4, Reset") {

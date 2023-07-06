@@ -7,8 +7,8 @@ constexpr unsigned ClockRate = 50 * 1000000;
 constexpr unsigned BaudRate = 115200;
 constexpr unsigned Oversample = 16;
 
-constexpr unsigned rxRate = ClockRate / (BaudRate * Oversample);
-constexpr unsigned txRate = ClockRate / BaudRate;
+constexpr unsigned rxRate = ClockRate / (BaudRate * Oversample) - 1;
+constexpr unsigned txRate = ClockRate / BaudRate - 1;
 constexpr unsigned deltaRate = txRate % rxRate;
 
 static void reset(VBaudRateGen& rg, int phase = 0) {

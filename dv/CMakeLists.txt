@@ -6,12 +6,16 @@ add_executable(tests)
 add_subdirectory(BaudRateGen)
 add_subdirectory(UartRx)
 add_subdirectory(UartTx)
+add_subdirectory(Loopback)
 
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
   TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar
   EdgeSync EdgeSyncEn UartRx UartRxEn UartTx UartTxEn
   ARGS COVERAGE
+)
+nyu_target_verilate(tests
+  TOP_MODULES Loopback_tb
 )
 target_link_libraries(tests PRIVATE
   Catch2::Catch2WithMain

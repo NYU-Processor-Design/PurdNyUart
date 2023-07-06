@@ -42,7 +42,7 @@ module UartRxEn #(
   logic advance;
 
   always_comb begin
-    edgeDetect = fall || rise;
+    edgeDetect = en ? fall || rise : 0;
     badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
     reSync = edgeDetect && (sampleCount < halfSampleCount);
     advance = reSync || (sampleCount == 0);
@@ -62,10 +62,10 @@ module UartRxEn #(
       curState <= nextState;
 
       if (curState != nextState) begin
-        edgeCmp     <= edgeDetect;
-        sampleCount <= fullSampleCount;
+        edgeCmp     <= en ? edgeDetect : edgeCmp;
+        sampleCount <= en ? fullSampleCount : sampleCount;
       end else begin
-        edgeCmp     <= edgeDetect && en ? edgeDetect : edgeCmp;
+        edgeCmp     <= (en && edgeDetect) ? edgeDetect : edgeCmp;
         sampleCount <= en ? sampleCount - 1 : sampleCount;
       end
     end

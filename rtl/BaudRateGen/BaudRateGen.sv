@@ -24,8 +24,8 @@ module BaudRateGen #(
     if (!nReset) begin
       rxClk   <= phase;
       txClk   <= phase;
-      rxCount <= rxWidth'(rxRate);
-      txCount <= txWidth'(txRate);
+      rxCount <= rxWidth'(rxRate - 1);
+      txCount <= txWidth'(txRate - 1);
     end else begin
 
       // verilog_format: off
@@ -35,10 +35,10 @@ module BaudRateGen #(
           rxClk <= phase;
         end
       end else if (
-        (txCount > txWidth'(rxRate)) ||
+        (txCount > txWidth'(rxRate - 1)) ||
         (txCount == 0)
       ) begin
-        rxCount <= rxWidth'(rxRate);
+        rxCount <= rxWidth'(rxRate - 1);
         rxClk <= ~phase;
       end
       // verilog_format: on
@@ -49,7 +49,7 @@ module BaudRateGen #(
           txClk <= phase;
         end
       end else begin
-        txCount <= txWidth'(txRate);
+        txCount <= txWidth'(txRate - 1);
         txClk   <= ~phase;
       end
     end

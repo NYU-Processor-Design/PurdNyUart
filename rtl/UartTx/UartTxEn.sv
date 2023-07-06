@@ -58,14 +58,14 @@ module UartTxEn (
           hasData    <= 1;
           writeCount <= 8;
           writeBuf   <= data;
-        end else if (hasData && en) begin
-          enterStart <= 1;
+        end else if (hasData) begin
+          enterStart <= en ? 1 : enterStart;
         end
       end
 
       if (nextState == START) begin
-        hasData <= 0;
-        enterStart <= 0;
+        hasData <= en ? 0 : hasData;
+        enterStart <= en ? 0 : enterStart;
       end
 
       if (nextState == DATA) begin
