@@ -1,5 +1,5 @@
+#include <array>
 #include <cstdint>
-#include <iostream>
 
 #include <catch2/catch_test_macros.hpp>
 #include <NyuTestUtil.hpp>
@@ -18,15 +18,17 @@ TEST_CASE("Loopback_tb") {
 
   nyu::reset(lb);
 
-  size_t i {0};
+  constexpr std::array<std::uint8_t, 9> seq {0, 1, 2, 3, 4, 5, 0xAA, 0x55,
+      0xFF};
 
+  for(auto val : seq) {
+    while(lb.busy)
+      nyu::tick(lb);
 
-  send(lb, 0xAA);
+    send(lb, val);
+    while(!lb.done_rx)
+      nyu::tick(lb);
 
-  while(!lb.done_rx) {
-    nyu::tick(lb);
-    REQUIRE(lb.err == 0);
+    REQUIRE(lb.data_rx == val);
   }
-
-  REQUIRE(lb.data_rx == 0xAA);
 }

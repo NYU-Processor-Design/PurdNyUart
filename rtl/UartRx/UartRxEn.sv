@@ -59,7 +59,7 @@ module UartRxEn #(
       edgeCmp     <= 0;
       curState    <= IDLE;
     end else begin
-      curState <= nextState;
+      curState <= en ? nextState : curState;
 
       if (curState != nextState) begin
         edgeCmp     <= en ? edgeDetect : edgeCmp;
@@ -85,7 +85,7 @@ module UartRxEn #(
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
-        readCount <= 8;
+        readCount <= en ? 8 : readCount;
       end else if (sampleCount == halfSampleCount) begin
         readCount <= en ? readCount - 1 : readCount;
         readBuf   <= en ? {syncOut, readBuf[7:1]} : readBuf;
