@@ -75,8 +75,11 @@ TEST_CASE("BaudRateGen, rx/tx sync") {
   VBaudRateGen rg;
   reset(rg);
 
-  for(unsigned i {0}; i < txRate - deltaRate; ++i)
+  unsigned ticks {0};
+  for(unsigned i {0}; i < txRate - deltaRate; ++i, ticks += rg.rxClk)
     nyu::tick(rg);
+
+  REQUIRE(ticks == Oversample - 1);
 
   for(unsigned i {0}; i < deltaRate; ++i) {
     nyu::tick(rg);

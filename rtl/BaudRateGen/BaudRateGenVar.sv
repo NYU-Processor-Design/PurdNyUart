@@ -1,21 +1,17 @@
 module BaudRateGenVar #(
-    int MaxClockRate = 100 * 10 ** 6,
-    int MinBaudRate  = 9600,
-    int Oversample   = 16
+    int rxWidth = 16,
+    int txWidth = 16
 ) (
     input clk,
     input nReset,
     input phase,
 
-    input [txWidth-1:0] count,
+    input [rxWidth-1:0] rxRate,
+    input [txWidth-1:0] txRate,
 
     output logic rxClk,
     output logic txClk
 );
-
-  localparam int txWidth = $clog2(MaxClockRate / MinBaudRate);
-  localparam int rxShift = $clog2(Oversample);
-  localparam int rxWidth = txWidth - rxShift;
 
   logic [rxWidth-1:0] rxCount;
   logic [txWidth-1:0] txCount;
@@ -25,8 +21,8 @@ module BaudRateGenVar #(
     if (!nReset) begin
       rxClk   <= phase;
       txClk   <= phase;
-      rxCount <= count[txWidth-1:rxShift];
-      txCount <= count;
+      rxCount <= rxRate;
+      txCount <= txRate;
     end else begin
 
       // verilog_format: off
@@ -36,10 +32,10 @@ module BaudRateGenVar #(
           rxClk <= phase;
         end
       end else if (
-        (txCount > txWidth'(count[txWidth-1:rxShift])) ||
+        (txCount > txWidth'(rxRate)) ||
         (txCount == 0)
       ) begin
-        rxCount <= count[txWidth-1:rxShift];
+        rxCount <= rxRate;
         rxClk <= ~phase;
       end
       // verilog_format: on
@@ -50,7 +46,7 @@ module BaudRateGenVar #(
           txClk <= phase;
         end
       end else begin
-        txCount <= count;
+        txCount <= txRate;
         txClk   <= ~phase;
       end
     end

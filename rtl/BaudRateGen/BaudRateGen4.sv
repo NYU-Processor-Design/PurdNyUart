@@ -16,8 +16,8 @@ module BaudRateGen4 #(
     output logic txClk
 );
 
-  `define calcRx(baud) (ClockRate /  ((baud) * Oversample))
-  `define calcTx(baud) (ClockRate / (baud))
+  `define calcRx(baud) ((ClockRate /  ((baud) * Oversample)) - 1)
+  `define calcTx(baud) ((ClockRate / (baud)) - 1)
 
   `define max2(a, b) ((a) > (b) ? (a) : (b))
   `define max3(a, b, c) `max2((a), `max2((b), (c)))
@@ -49,8 +49,8 @@ module BaudRateGen4 #(
   `undef max3
   `undef max4
 
-  localparam int rxWidth = $clog2(maxRx);
-  localparam int txWidth = $clog2(maxTx);
+  localparam int rxWidth = $clog2(maxRx + 1);
+  localparam int txWidth = $clog2(maxTx + 1);
 
   logic [rxWidth-1:0] rxCount;
   logic [txWidth-1:0] txCount;
@@ -60,8 +60,8 @@ module BaudRateGen4 #(
     if (!nReset) begin
       rxClk   <= phase;
       txClk   <= phase;
-      rxCount <= rxWidth'(rxArr[sel] - 1);
-      txCount <= txWidth'(txArr[sel] - 1);
+      rxCount <= rxWidth'(rxArr[sel]);
+      txCount <= txWidth'(txArr[sel]);
     end else begin
 
       // verilog_format: off
@@ -71,10 +71,10 @@ module BaudRateGen4 #(
           rxClk <= phase;
         end
       end else if (
-        (txCount > txWidth'(rxArr[sel] - 1)) ||
+        (txCount > txWidth'(rxArr[sel])) ||
         (txCount == 0)
       ) begin
-        rxCount <= rxWidth'(rxArr[sel] - 1);
+        rxCount <= rxWidth'(rxArr[sel]);
         rxClk <= ~phase;
       end
       // verilog_format: on
@@ -85,7 +85,7 @@ module BaudRateGen4 #(
           txClk <= phase;
         end
       end else begin
-        txCount <= txWidth'(txArr[sel] - 1);
+        txCount <= txWidth'(txArr[sel]);
         txClk   <= ~phase;
       end
     end

@@ -94,11 +94,14 @@ TEST_CASE("BaudRateGen4, rx/tx sync") {
     rg.sel = sel;
     reset(rg);
 
+    unsigned ticks {0};
     unsigned txRate {selTx(sel)};
     unsigned deltaRate {txRate % selRx(sel)};
 
-    for(unsigned i {0}; i < txRate - deltaRate; ++i)
+    for(unsigned i {0}; i < txRate - deltaRate; ++i, ticks += rg.rxClk)
       nyu::tick(rg);
+
+    REQUIRE(ticks == Oversample - 1);
 
     for(unsigned i {0}; i < deltaRate; ++i) {
       nyu::tick(rg);

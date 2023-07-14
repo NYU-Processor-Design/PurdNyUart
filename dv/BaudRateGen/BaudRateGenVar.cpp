@@ -5,21 +5,16 @@
 
 #include <VBaudRateGenVar.h>
 
-static constexpr unsigned flog2(unsigned x) {
-  return x == 1 ? 0 : flog2(x >> 1) + 1;
-}
+constexpr unsigned rxWidth = 16;
+constexpr unsigned txWidth = 16;
 
-static constexpr unsigned clog2(unsigned x) {
-  return x == 1 ? 0 : flog2(x - 1) + 1;
-}
-
-constexpr unsigned MaxClockRate = 100 * 1000000;
-constexpr unsigned MinBaudRate = 9600;
+constexpr unsigned ClockRate = 50 * 1000000;
+constexpr unsigned BaudRate = 115200;
 constexpr unsigned Oversample = 16;
 
-constexpr unsigned txWidth = clog2(MaxClockRate / (2 * MinBaudRate));
-constexpr unsigned rxShift = clog2(Oversample);
-constexpr unsigned rxWidth = txWidth - rxShift;
+constexpr unsigned rxRate = ClockRate / (BaudRate * Oversample) - 1;
+constexpr unsigned txRate = ClockRate / BaudRate - 1;
+constexpr unsigned deltaRate = txRate % rxRate;
 
 static void reset(VBaudRateGenVar& rg, int phase = 0) {
   rg.phase = !!phase;
@@ -42,8 +37,9 @@ TEST_CASE("BaudRateGenVar, Reset") {
 TEST_CASE("BaudRateGenVar, rxClk") {
   VBaudRateGenVar rg;
 
-  for(std::uint16_t i {1}; i <= (1 << rxWidth); i <<= 1) {
-    rg.count = i << rxShift;
+  for(unsigned i {1}; i < (1 << rxWidth); i <<= 1) {
+    rg.rxRate = i;
+    rg.txRate = i;
     reset(rg);
 
     for(unsigned j {0}; j < i; ++j) {
@@ -67,10 +63,9 @@ TEST_CASE("BaudRateGenVar, rxClk") {
 TEST_CASE("BaudRateGenVar, txClk") {
   VBaudRateGenVar rg;
 
-  for(std::uint16_t i {1}; i < (1 << txWidth); i <<= 1) {
-    rg.count = i;
+  for(unsigned i {1}; i < (1 << txWidth); i <<= 1) {
+    rg.txRate = i;
     reset(rg);
-
     for(unsigned j {0}; j < i; ++j) {
       nyu::tick(rg);
       REQUIRE(rg.txClk == 0);
@@ -91,26 +86,25 @@ TEST_CASE("BaudRateGenVar, txClk") {
 
 TEST_CASE("BaudRateGenVar, rx/tx sync") {
   VBaudRateGenVar rg;
+  rg.rxRate = rxRate;
+  rg.txRate = txRate;
+  reset(rg);
 
-  for(std::uint16_t i {1 << rxShift}; i < (1 << txWidth); i <<= 1) {
-    rg.count = i;
-    reset(rg);
-
-    unsigned deltaRate {i % (unsigned) (i >> rxShift)};
-
-    for(unsigned j {0}; j < i - deltaRate; ++j)
-      nyu::tick(rg);
-
-    for(unsigned j {0}; j < deltaRate; ++j) {
-      nyu::tick(rg);
-
-      REQUIRE(rg.rxClk == 0);
-      REQUIRE(rg.txClk == 0);
-    }
-
+  unsigned ticks {0};
+  for(unsigned i {0}; i < txRate - deltaRate; ++i, ticks += rg.rxClk)
     nyu::tick(rg);
 
-    REQUIRE(rg.rxClk == 1);
-    REQUIRE(rg.txClk == 1);
+  REQUIRE(ticks == Oversample - 1);
+
+  for(unsigned i {0}; i < deltaRate; ++i) {
+    nyu::tick(rg);
+
+    REQUIRE(rg.rxClk == 0);
+    REQUIRE(rg.txClk == 0);
   }
+
+  nyu::tick(rg);
+
+  REQUIRE(rg.rxClk == 1);
+  REQUIRE(rg.txClk == 1);
 }
