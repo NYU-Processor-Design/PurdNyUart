@@ -4,6 +4,7 @@ module BaudRateGenVar #(
 ) (
     input clk,
     input nReset,
+    input syncReset,
     input phase,
 
     input [rxWidth-1:0] rxRate,
@@ -18,7 +19,7 @@ module BaudRateGenVar #(
 
   always @(posedge clk, negedge nReset) begin
 
-    if (!nReset) begin
+    if (!nReset || syncReset) begin
       rxClk   <= phase;
       txClk   <= phase;
       rxCount <= rxRate;

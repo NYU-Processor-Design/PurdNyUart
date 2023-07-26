@@ -18,6 +18,7 @@ constexpr unsigned deltaRate = txRate % rxRate;
 
 static void reset(VBaudRateGenVar& rg, int phase = 0) {
   rg.phase = !!phase;
+  rg.syncReset = 0;
   nyu::reset(rg);
 }
 
@@ -33,6 +34,26 @@ TEST_CASE("BaudRateGenVar, Reset") {
   REQUIRE(rg.rxClk == 1);
   REQUIRE(rg.txClk == 1);
 }
+
+TEST_CASE("BaudRateGenVar, syncReset") {
+  VBaudRateGenVar rg;
+  reset(rg);
+
+  rg.syncReset = 1;
+  rg.phase = 1;
+
+  nyu::tick(rg);
+
+  REQUIRE(rg.rxClk == 1);
+  REQUIRE(rg.txClk == 1);
+
+  rg.phase = 0;
+  nyu::tick(rg);
+
+  REQUIRE(rg.rxClk == 0);
+  REQUIRE(rg.txClk == 0);
+}
+
 
 TEST_CASE("BaudRateGenVar, rxClk") {
   VBaudRateGenVar rg;
