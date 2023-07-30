@@ -21,7 +21,7 @@ static unsigned selTx(unsigned sel) {
 }
 
 TEST_CASE("BaudRateGen4, Reset") {
-  VBaudRateGen4 rg;
+  VBaudRateGen4& rg {nyu::getDUT<VBaudRateGen4>()};
   reset(rg, 0);
 
   REQUIRE(rg.rxClk == 0);
@@ -34,7 +34,7 @@ TEST_CASE("BaudRateGen4, Reset") {
 }
 
 TEST_CASE("BaudRateGen4, rxClk") {
-  VBaudRateGen4 rg;
+  VBaudRateGen4& rg {nyu::getDUT<VBaudRateGen4>()};
 
   for(unsigned sel {0}; sel < 4; ++sel) {
     rg.sel = sel;
@@ -61,7 +61,7 @@ TEST_CASE("BaudRateGen4, rxClk") {
 }
 
 TEST_CASE("BaudRateGen4, txClk") {
-  VBaudRateGen4 rg;
+  VBaudRateGen4& rg {nyu::getDUT<VBaudRateGen4>()};
 
   for(unsigned sel {0}; sel < 4; ++sel) {
     rg.sel = sel;
@@ -88,7 +88,7 @@ TEST_CASE("BaudRateGen4, txClk") {
 }
 
 TEST_CASE("BaudRateGen4, rx/tx sync") {
-  VBaudRateGen4 rg;
+  VBaudRateGen4& rg {nyu::getDUT<VBaudRateGen4>()};
 
   for(unsigned sel {0}; sel < 4; ++sel) {
     rg.sel = sel;

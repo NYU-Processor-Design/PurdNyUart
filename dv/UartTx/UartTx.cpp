@@ -14,7 +14,7 @@ static void send(VUartTx& tx, std::uint8_t val) {
 
 
 TEST_CASE("UartTx, reset") {
-  VUartTx tx;
+  auto& tx {nyu::getDUT<VUartTx>()};
 
   nyu::reset(tx);
 
@@ -30,7 +30,7 @@ TEST_CASE("UartTx, reset") {
 }
 
 TEST_CASE("UartTx, busy/done") {
-  VUartTx tx;
+  auto& tx {nyu::getDUT<VUartTx>()};
 
   nyu::reset(tx);
 
@@ -51,7 +51,7 @@ TEST_CASE("UartTx, busy/done") {
 }
 
 TEST_CASE("UartTx, data") {
-  VUartTx tx;
+  auto& tx {nyu::getDUT<VUartTx>()};
 
   nyu::reset(tx);
 

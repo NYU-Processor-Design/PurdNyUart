@@ -18,7 +18,7 @@ static void send(VUartTxEn& tx, std::uint8_t val) {
 }
 
 TEST_CASE("UartTxEn, reset") {
-  VUartTxEn tx;
+  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -34,7 +34,7 @@ TEST_CASE("UartTxEn, reset") {
 }
 
 TEST_CASE("UartTxEn, busy/done") {
-  VUartTxEn tx;
+  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -55,7 +55,7 @@ TEST_CASE("UartTxEn, busy/done") {
 }
 
 TEST_CASE("UartTxEn, data") {
-  VUartTxEn tx;
+  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -88,7 +88,7 @@ TEST_CASE("UartTxEn, data") {
 }
 
 TEST_CASE("UartTxEn, async valid") {
-  VUartTxEn tx;
+  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
   tx.en = 0;

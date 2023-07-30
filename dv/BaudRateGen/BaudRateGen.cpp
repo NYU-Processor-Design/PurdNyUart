@@ -17,7 +17,7 @@ static void reset(VBaudRateGen& rg, int phase = 0) {
 }
 
 TEST_CASE("BaudRateGen, Reset") {
-  VBaudRateGen rg;
+  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg, 0);
 
   REQUIRE(rg.rxClk == 0);
@@ -30,7 +30,7 @@ TEST_CASE("BaudRateGen, Reset") {
 }
 
 TEST_CASE("BaudRateGen, rxClk") {
-  VBaudRateGen rg;
+  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg);
 
   for(unsigned i {0}; i < rxRate; ++i) {
@@ -51,7 +51,7 @@ TEST_CASE("BaudRateGen, rxClk") {
 }
 
 TEST_CASE("BaudRateGen, txClk") {
-  VBaudRateGen rg;
+  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg);
 
   for(unsigned i {0}; i < txRate; ++i) {
@@ -72,7 +72,7 @@ TEST_CASE("BaudRateGen, txClk") {
 }
 
 TEST_CASE("BaudRateGen, rx/tx sync") {
-  VBaudRateGen rg;
+  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg);
 
   unsigned ticks {0};

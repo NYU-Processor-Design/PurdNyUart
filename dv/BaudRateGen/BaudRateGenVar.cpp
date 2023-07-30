@@ -23,7 +23,7 @@ static void reset(VBaudRateGenVar& rg, int phase = 0) {
 }
 
 TEST_CASE("BaudRateGenVar, Reset") {
-  VBaudRateGenVar rg;
+  VBaudRateGenVar& rg {nyu::getDUT<VBaudRateGenVar>()};
   reset(rg, 0);
 
   REQUIRE(rg.rxClk == 0);
@@ -36,7 +36,7 @@ TEST_CASE("BaudRateGenVar, Reset") {
 }
 
 TEST_CASE("BaudRateGenVar, syncReset") {
-  VBaudRateGenVar rg;
+  VBaudRateGenVar& rg {nyu::getDUT<VBaudRateGenVar>()};
   reset(rg);
 
   rg.syncReset = 1;
@@ -56,7 +56,7 @@ TEST_CASE("BaudRateGenVar, syncReset") {
 
 
 TEST_CASE("BaudRateGenVar, rxClk") {
-  VBaudRateGenVar rg;
+  VBaudRateGenVar& rg {nyu::getDUT<VBaudRateGenVar>()};
 
   for(unsigned i {1}; i < (1 << rxWidth); i <<= 1) {
     rg.rxRate = i;
@@ -82,7 +82,7 @@ TEST_CASE("BaudRateGenVar, rxClk") {
 }
 
 TEST_CASE("BaudRateGenVar, txClk") {
-  VBaudRateGenVar rg;
+  VBaudRateGenVar& rg {nyu::getDUT<VBaudRateGenVar>()};
 
   for(unsigned i {1}; i < (1 << txWidth); i <<= 1) {
     rg.txRate = i;
@@ -106,7 +106,7 @@ TEST_CASE("BaudRateGenVar, txClk") {
 }
 
 TEST_CASE("BaudRateGenVar, rx/tx sync") {
-  VBaudRateGenVar rg;
+  VBaudRateGenVar& rg {nyu::getDUT<VBaudRateGenVar>()};
   rg.rxRate = rxRate;
   rg.txRate = txRate;
   reset(rg);

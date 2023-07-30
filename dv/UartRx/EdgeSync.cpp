@@ -9,7 +9,7 @@ static void reset(VEdgeSync& es, unsigned phase = 1) {
 }
 
 TEST_CASE("EdgeSync, reset") {
-  VEdgeSync es;
+  VEdgeSync& es {nyu::getDUT<VEdgeSync>()};
   reset(es);
 
   es.in = 0;
@@ -23,7 +23,7 @@ TEST_CASE("EdgeSync, reset") {
 }
 
 TEST_CASE("EdgeSync, phase") {
-  VEdgeSync es;
+  VEdgeSync& es {nyu::getDUT<VEdgeSync>()};
 
   reset(es, 0);
   REQUIRE(es.out == 0);
@@ -33,7 +33,7 @@ TEST_CASE("EdgeSync, phase") {
 }
 
 TEST_CASE("EdgeSync, input") {
-  VEdgeSync es;
+  VEdgeSync& es {nyu::getDUT<VEdgeSync>()};
   reset(es);
 
   es.in = 1;
@@ -48,7 +48,7 @@ TEST_CASE("EdgeSync, input") {
 }
 
 TEST_CASE("EdgeSync, rise/fall") {
-  VEdgeSync es;
+  VEdgeSync& es {nyu::getDUT<VEdgeSync>()};
   reset(es, 0);
 
   es.in = 1;

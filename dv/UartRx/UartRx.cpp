@@ -27,7 +27,7 @@ static void start_transmit(VUartRx& rx, std::uint8_t val) {
 }
 
 TEST_CASE("UartRx, reset") {
-  VUartRx rx;
+  VUartRx& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -43,7 +43,7 @@ TEST_CASE("UartRx, reset") {
 }
 
 TEST_CASE("UartRx, done") {
-  VUartRx rx;
+  VUartRx& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -57,7 +57,7 @@ TEST_CASE("UartRx, done") {
 }
 
 TEST_CASE("UartRx, resync") {
-  VUartRx rx;
+  VUartRx& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -92,7 +92,7 @@ void check_data_error(VUartRx& rx) {
 }
 
 TEST_CASE("UartRx, error") {
-  VUartRx rx;
+  VUartRx& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -116,7 +116,7 @@ TEST_CASE("UartRx, error") {
 }
 
 TEST_CASE("UartRx, idle") {
-  VUartRx rx;
+  VUartRx& rx {nyu::getDUT<VUartRx>()};
   nyu::reset(rx);
 
   start_transmit(rx, 0xAA);

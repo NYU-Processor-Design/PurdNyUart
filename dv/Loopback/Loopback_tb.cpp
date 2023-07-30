@@ -14,7 +14,7 @@ static void send(VLoopback_tb& lb, std::uint8_t val) {
 }
 
 TEST_CASE("Loopback_tb") {
-  VLoopback_tb lb;
+  VLoopback_tb& lb {nyu::getDUT<VLoopback_tb>()};
 
   nyu::reset(lb);
 
