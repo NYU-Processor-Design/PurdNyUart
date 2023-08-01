@@ -1,0 +1,16 @@
+CAPI=2:
+name: socet:purdnyuart:UartRx:1.1.1
+description: Uart Receiver
+
+filesets:
+    rtl:
+        files:
+            - UartRx.sv
+            - EdgeSync.sv
+        file_type: systemVerilogSource
+
+targets:
+    default: &default
+        filesets:
+            - rtl
+        toplevel: UartRx

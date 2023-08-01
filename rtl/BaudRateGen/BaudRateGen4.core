@@ -1,0 +1,15 @@
+CAPI=2:
+name: socet:purdnyuart:BaudRateGen4:1.1.1
+description: Baud Rate Generator
+
+filesets:
+    rtl:
+        files:
+            - BaudRateGen4.sv
+        file_type: systemVerilogSource
+
+targets:
+    default: &default
+        filesets:
+            - rtl
+        toplevel: BaudRateGen
