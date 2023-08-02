@@ -6,10 +6,10 @@ module UartTxEn (
     input logic [7:0] data,
     input valid,
 
-    output out,
+    output logic out,
 
-    output busy,
-    output done
+    output logic busy,
+    output logic done
 );
 
   // verilog_format: off

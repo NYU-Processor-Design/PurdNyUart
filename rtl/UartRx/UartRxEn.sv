@@ -9,8 +9,8 @@ module UartRxEn #(
 
     output logic [7:0] data,
 
-    output done,
-    output err
+    output logic done,
+    output logic err
 );
 
   localparam sampleWidth = $clog2(Oversample);
@@ -32,7 +32,7 @@ module UartRxEn #(
 
   EdgeSyncEn es (
       .*,
-      .phase(1),
+      .phase(1'b1),
       .out  (syncOut)
   );
 
@@ -40,6 +40,10 @@ module UartRxEn #(
   logic badSync;
   logic reSync;
   logic advance;
+
+  logic [sampleWidth-1:0] sampleCount;
+  logic [3:0] readCount;
+  logic edgeCmp;
 
   always_comb begin
     edgeDetect = en ? fall || rise : 0;
@@ -49,9 +53,6 @@ module UartRxEn #(
     done = advance && (readCount == 0);
     err = nextState == ERROR;
   end
-
-  logic [sampleWidth-1:0] sampleCount;
-  logic edgeCmp;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
@@ -72,7 +73,6 @@ module UartRxEn #(
   end
 
   logic [7:0] readBuf;
-  logic [3:0] readCount;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
