@@ -1,5 +1,5 @@
 CAPI=2:
-name: socet:purdnyuart:UartTx:1.1.1
+name: socet:purdnyuart:UartTx:1.1.2
 description: Uart Transmitter
 
 filesets:

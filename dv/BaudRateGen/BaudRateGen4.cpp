@@ -13,11 +13,11 @@ static void reset(VBaudRateGen4& rg, int phase = 0) {
 }
 
 static unsigned selRx(unsigned sel) {
-  return ClockRate / (Bauds[sel] * Oversample) - 1;
+  return ClockRate / (Bauds[sel] * Oversample);
 }
 
 static unsigned selTx(unsigned sel) {
-  return ClockRate / Bauds[sel] - 1;
+  return ClockRate / Bauds[sel];
 }
 
 TEST_CASE("BaudRateGen4, Reset") {
@@ -42,20 +42,19 @@ TEST_CASE("BaudRateGen4, rxClk") {
 
     unsigned rate {selRx(sel)};
 
-    for(unsigned i {0}; i < rate; ++i) {
-      nyu::tick(rg);
+    for(unsigned i {0}; i < rate - 1; ++i) {
       REQUIRE(rg.rxClk == 0);
+      nyu::tick(rg);
     }
 
-    nyu::tick(rg);
     REQUIRE(rg.rxClk == 1);
+    nyu::tick(rg);
 
-    for(unsigned i {0}; i < rate; ++i) {
-      nyu::tick(rg);
+    for(unsigned i {0}; i < rate - 1; ++i) {
       REQUIRE(rg.rxClk == 0);
+      nyu::tick(rg);
     }
 
-    nyu::tick(rg);
     REQUIRE(rg.rxClk == 1);
   }
 }
@@ -69,21 +68,20 @@ TEST_CASE("BaudRateGen4, txClk") {
 
     unsigned rate {selTx(sel)};
 
-    for(unsigned i {0}; i < rate; ++i) {
-      nyu::tick(rg);
+    for(unsigned i {0}; i < rate - 1; ++i) {
       REQUIRE(rg.txClk == 0);
+      nyu::tick(rg);
+    }
+
+    REQUIRE(rg.txClk == 1);
+    nyu::tick(rg);
+
+    for(unsigned i {0}; i < rate - 1; ++i) {
+      REQUIRE(rg.txClk == 0);
+      nyu::tick(rg);
     }
 
     nyu::tick(rg);
-    REQUIRE(rg.txClk == 1);
-
-    for(unsigned i {0}; i < rate; ++i) {
-      nyu::tick(rg);
-      REQUIRE(rg.txClk == 0);
-    }
-
-    nyu::tick(rg);
-    REQUIRE(rg.txClk == 1);
   }
 }
 
@@ -98,19 +96,16 @@ TEST_CASE("BaudRateGen4, rx/tx sync") {
     unsigned txRate {selTx(sel)};
     unsigned deltaRate {txRate % selRx(sel)};
 
-    for(unsigned i {0}; i < txRate - deltaRate; ++i, ticks += rg.rxClk)
+    for(unsigned i {0}; i < txRate - 1 - deltaRate; ++i, ticks += rg.rxClk)
       nyu::tick(rg);
 
     REQUIRE(ticks == Oversample - 1);
 
     for(unsigned i {0}; i < deltaRate; ++i) {
-      nyu::tick(rg);
-
       REQUIRE(rg.rxClk == 0);
       REQUIRE(rg.txClk == 0);
+      nyu::tick(rg);
     }
-
-    nyu::tick(rg);
 
     REQUIRE(rg.rxClk == 1);
     REQUIRE(rg.txClk == 1);

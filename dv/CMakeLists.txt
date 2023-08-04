@@ -12,7 +12,7 @@ nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
   TOP_MODULES BaudRateGen BaudRateGen4 BaudRateGenVar
   EdgeSync EdgeSyncEn UartRx UartRxEn UartTx UartTxEn
-  ARGS COVERAGE
+  ARGS COVERAGE TRACE_FST
 )
 nyu_target_verilate(tests
   TOP_MODULES Loopback_tb

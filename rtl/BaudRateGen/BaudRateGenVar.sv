@@ -17,39 +17,30 @@ module BaudRateGenVar #(
   logic [rxWidth-1:0] rxCount;
   logic [txWidth-1:0] txCount;
 
+  always_comb begin
+    rxClk = rxCount > 0 ? phase : ~phase;
+    txClk = txCount > 0 ? phase : ~phase;
+  end
+
   always @(posedge clk, negedge nReset) begin
 
     if (!nReset || syncReset) begin
-      rxClk   <= phase;
-      txClk   <= phase;
-      rxCount <= rxRate;
-      txCount <= txRate;
+      rxCount <= rxRate - 1;
+      txCount <= txRate - 1;
     end else begin
+      txCount <= txCount > 0 ? txCount - 1 : txRate - 1;
 
       // verilog_format: off
-      if (rxCount > 0) begin
-        rxCount <= rxCount - 1;
-        if(rxClk != phase) begin
-          rxClk <= phase;
-        end
+      if (rxCount == 0) begin
+        rxCount <= rxRate - 1;
       end else if (
+        (rxCount > 1) ||
         (txCount > txWidth'(rxRate)) ||
-        (txCount == 0)
+        (txCount == 1)
       ) begin
-        rxCount <= rxRate;
-        rxClk <= ~phase;
+        rxCount <= rxCount - 1;
       end
       // verilog_format: on
-
-      if (txCount > 0) begin
-        txCount <= txCount - 1;
-        if (txClk != phase) begin
-          txClk <= phase;
-        end
-      end else begin
-        txCount <= txRate;
-        txClk   <= ~phase;
-      end
     end
 
   end

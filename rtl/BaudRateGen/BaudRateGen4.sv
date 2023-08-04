@@ -16,8 +16,8 @@ module BaudRateGen4 #(
     output logic txClk
 );
 
-  `define calcRx(baud) ((ClockRate /  ((baud) * Oversample)) - 1)
-  `define calcTx(baud) ((ClockRate / (baud)) - 1)
+  `define calcRx(baud) (ClockRate /  ((baud) * Oversample))
+  `define calcTx(baud) (ClockRate / (baud))
 
   `define max2(a, b) ((a) > (b) ? (a) : (b))
   `define max3(a, b, c) `max2((a), `max2((b), (c)))
@@ -49,46 +49,36 @@ module BaudRateGen4 #(
   `undef max3
   `undef max4
 
-  localparam int rxWidth = $clog2(maxRx + 1);
-  localparam int txWidth = $clog2(maxTx + 1);
+  localparam int rxWidth = $clog2(maxRx);
+  localparam int txWidth = $clog2(maxTx);
 
   logic [rxWidth-1:0] rxCount;
   logic [txWidth-1:0] txCount;
 
+  always_comb begin
+    rxClk = rxCount > 0 ? phase : ~phase;
+    txClk = txCount > 0 ? phase : ~phase;
+  end
+
   always @(posedge clk, negedge nReset) begin
 
     if (!nReset) begin
-      rxClk   <= phase;
-      txClk   <= phase;
-      rxCount <= rxWidth'(rxArr[sel]);
-      txCount <= txWidth'(txArr[sel]);
+      rxCount <= rxWidth'(rxArr[sel] - 1);
+      txCount <= txWidth'(txArr[sel] - 1);
     end else begin
+      txCount <= txCount > 0 ? txCount - 1 : txWidth'(txArr[sel] - 1);
 
       // verilog_format: off
-      if (rxCount > 0) begin
-        rxCount <= rxCount - 1;
-        if(rxClk != phase) begin
-          rxClk <= phase;
-        end
+      if (rxCount == 0) begin
+        rxCount <= rxWidth'(rxArr[sel] - 1);
       end else if (
+        (rxCount > 1) ||
         (txCount > txWidth'(rxArr[sel])) ||
-        (txCount == 0)
+        (txCount == 1)
       ) begin
-        rxCount <= rxWidth'(rxArr[sel]);
-        rxClk <= ~phase;
+        rxCount <= rxCount - 1;
       end
       // verilog_format: on
-
-      if (txCount > 0) begin
-        txCount <= txCount - 1;
-        if (txClk != phase) begin
-          txClk <= phase;
-        end
-      end else begin
-        txCount <= txWidth'(txArr[sel]);
-        txClk   <= ~phase;
-      end
     end
-
   end
 endmodule
