@@ -1,5 +1,5 @@
 CAPI=2:
-name: socet:purdnyuart:UartRxEn:1.1.2
+name: socet:purdnyuart:UartRxEn:1.2.0
 description: Uart Receiver
 
 filesets:

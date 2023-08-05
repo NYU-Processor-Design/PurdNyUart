@@ -1,5 +1,5 @@
 CAPI=2:
-name: socet:purdnyuart:BaudRateGenVar:1.1.2
+name: socet:purdnyuart:BaudRateGenVar:1.2.0
 description: Baud Rate Generator
 
 filesets:
