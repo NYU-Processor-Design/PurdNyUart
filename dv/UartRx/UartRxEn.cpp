@@ -12,7 +12,7 @@ static void reset(VUartRxEn& rx) {
   nyu::reset(rx);
 }
 
-static void start(VUartRxEn& rx, unsigned ticks = Oversample + 1) {
+static void start(VUartRxEn& rx, unsigned ticks = Oversample) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
@@ -84,7 +84,7 @@ TEST_CASE("UartRxEn, resync") {
   start(rx, 14);
   transmit(rx, 0xAA, 13);
 
-  nyu::tick(rx, 5);
+  nyu::tick(rx, 4);
   REQUIRE(rx.data == 0xAA);
   REQUIRE(rx.done == 1);
   nyu::tick(rx, 9);
@@ -93,7 +93,7 @@ TEST_CASE("UartRxEn, resync") {
   transmit(rx, 0x55, 13);
 
   rx.in = 1;
-  nyu::tick(rx, 2);
+  nyu::tick(rx);
   REQUIRE(rx.data == 0x55);
   REQUIRE(rx.done == 1);
 }
@@ -105,7 +105,6 @@ void check_data_error(VUartRxEn& rx) {
   nyu::tick(rx);
   rx.in = 1;
 
-  nyu::tick(rx);
   REQUIRE(rx.err == 1);
   nyu::tick(rx);
   REQUIRE(rx.err == 0);
@@ -119,7 +118,7 @@ TEST_CASE("UartRxEn, error") {
   start(rx, 1);
 
   rx.in = 1;
-  nyu::tick(rx, 2);
+  nyu::tick(rx);
 
   REQUIRE(rx.err == 1);
 

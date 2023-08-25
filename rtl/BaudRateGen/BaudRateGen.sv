@@ -1,47 +1,60 @@
 module BaudRateGen #(
-    int ClockRate  = 50 * 10 ** 6,
-    int BaudRate   = 115200,
-    int Oversample = 16
+    int MaxClockRate = 100 * 10 ** 6,
+    int MinBaudRate  = 9600,
+    int Oversample   = 16
 ) (
     input clk,
     input nReset,
+    input syncReset,
+
     input phase,
+    input [txWidth-1:0] rate,
 
     output logic rxClk,
     output logic txClk
 );
 
-  localparam int rxRate = (ClockRate / (BaudRate * Oversample));
-  localparam int txRate = (ClockRate / BaudRate);
-  localparam int rxWidth = $clog2(rxRate);
-  localparam int txWidth = $clog2(txRate);
+  localparam int txWidth = $clog2(MaxClockRate / MinBaudRate);
+  localparam int rxShift = $clog2(Oversample);
+  localparam int rxWidth = txWidth - rxShift;
+
+  logic [txWidth-1:0] totalWait;
+  logic [txWidth-1:0] postWait;
+  logic [txWidth-1:0] preWait;
+  logic inWait;
+
+  logic [rxWidth-1:0] rxRate;
+  logic [rxWidth-1:0] offset;
 
   logic [rxWidth-1:0] rxCount;
   logic [txWidth-1:0] txCount;
 
   always_comb begin
-    rxClk = rxCount > 0 ? phase : ~phase;
-    txClk = txCount > 0 ? phase : ~phase;
+    rxRate    = rate[txWidth-1:rxShift];
+    offset    = rxRate - ((rxRate >> 1) + 1);
+
+    totalWait = rate - {rxRate, 4'b0};
+    preWait   = rate - (totalWait >> 1);
+    postWait  = rate - preWait + txWidth'(rate[0]) + txWidth'(offset);
+    inWait    = txCount > preWait || txCount < postWait;
+
+    rxClk     = (rxRate > 1) ? (!inWait && rxCount == 0) ^ phase : phase;
+    txClk     = (rate > 1) ? (txCount == 0) ^ phase : phase;
   end
 
   always @(posedge clk, negedge nReset) begin
-    if (!nReset) begin
-      rxCount <= rxWidth'(rxRate - 1);
-      txCount <= txWidth'(txRate - 1);
-    end else begin
-      txCount <= txCount > 0 ? txCount - 1 : txWidth'(txRate - 1);
+    if(!nReset || syncReset || (txCount == 0)) begin
+      rxCount <= rxRate - offset - 1;
+    end else if (rxCount == 0) begin
+      rxCount <= rxRate - 1;
+    end else if (!inWait) begin
+      rxCount <= rxCount - 1;
+    end
 
-      // verilog_format: off
-      if (rxCount == 0) begin
-        rxCount <= rxWidth'(rxRate - 1);
-      end else if (
-        (rxCount > 1) ||
-        (txCount > txWidth'(rxRate)) ||
-        (txCount == 1)
-      ) begin
-        rxCount <= rxCount - 1;
-      end
-      // verilog_format: on
+    if (!nReset || syncReset || (txCount == 0)) begin
+      txCount <= rate - 1;
+    end else begin
+      txCount <= txCount - 1;
     end
   end
 endmodule

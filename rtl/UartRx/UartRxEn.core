@@ -6,7 +6,6 @@ filesets:
     rtl:
         files:
             - UartRxEn.sv
-            - EdgeSyncEn.sv
         file_type: systemVerilogSource
 
 targets:

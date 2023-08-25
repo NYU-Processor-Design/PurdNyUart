@@ -5,7 +5,7 @@
 
 constexpr unsigned Oversample = 16;
 
-static void start(VUartRx& rx, unsigned ticks = Oversample + 1) {
+static void start(VUartRx& rx, unsigned ticks = Oversample) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
@@ -64,7 +64,7 @@ TEST_CASE("UartRx, resync") {
   start(rx, 14);
   transmit(rx, 0xAA, 13);
 
-  nyu::tick(rx, 5);
+  nyu::tick(rx, 4);
   REQUIRE(rx.data == 0xAA);
   REQUIRE(rx.done == 1);
   nyu::tick(rx, 9);
@@ -73,7 +73,7 @@ TEST_CASE("UartRx, resync") {
   transmit(rx, 0x55, 13);
 
   rx.in = 1;
-  nyu::tick(rx, 2);
+  nyu::tick(rx);
   REQUIRE(rx.data == 0x55);
   REQUIRE(rx.done == 1);
 }
@@ -85,7 +85,6 @@ void check_data_error(VUartRx& rx) {
   nyu::tick(rx);
   rx.in = 1;
 
-  nyu::tick(rx);
   REQUIRE(rx.err == 1);
   nyu::tick(rx);
   REQUIRE(rx.err == 0);
@@ -99,7 +98,7 @@ TEST_CASE("UartRx, error") {
   start(rx, 1);
 
   rx.in = 1;
-  nyu::tick(rx, 2);
+  nyu::tick(rx);
 
   REQUIRE(rx.err == 1);
 

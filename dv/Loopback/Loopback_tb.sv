@@ -17,6 +17,8 @@ module Loopback_tb (
 
   BaudRateGen bg (
       .phase(0),
+      .syncReset(0),
+      .rate(2 << 4),
       .*
   );
 

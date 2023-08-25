@@ -27,13 +27,19 @@ module UartRx #(
   } curState , nextState;
   // verilog_format: on
 
-  logic rise, fall, syncOut;
+  logic rise, fall, cmp;
 
-  EdgeSync es (
-      .*,
-      .phase(1),
-      .out  (syncOut)
-  );
+  always_ff @(posedge clk, negedge nReset) begin
+    if(!nReset) begin
+      cmp  <= 1;
+      rise <= 0;
+      fall <= 0;
+    end else begin
+      cmp  <= in;
+      rise <= ~cmp & in;
+      fall <= cmp & ~in;
+    end
+  end
 
   logic edgeDetect;
   logic badSync;
@@ -87,7 +93,7 @@ module UartRx #(
         readCount <= 8;
       end else if (sampleCount == halfSampleCount) begin
         readCount <= readCount - 1;
-        readBuf   <= {syncOut, readBuf[7:1]};
+        readBuf   <= {in, readBuf[7:1]};
       end
 
     end
@@ -126,7 +132,7 @@ module UartRx #(
       end
 
       STOP:
-      if (badSync || (syncOut == 0 && sampleCount == halfSampleCount)) begin
+      if (badSync || (in == 0 && sampleCount == halfSampleCount)) begin
         nextState = ERROR;
       end else if (fall && sampleCount < halfSampleCount) begin
         nextState = START;
