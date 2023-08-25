@@ -18,9 +18,12 @@ module BaudRateGen #(
   localparam int rxShift = $clog2(Oversample);
   localparam int rxWidth = txWidth - rxShift;
 
+  // Unreasonable to test these full-width
+  /* verilator coverage_off */
   logic [txWidth-1:0] totalWait;
   logic [txWidth-1:0] postWait;
   logic [txWidth-1:0] preWait;
+  /* verilator coverage_on */
   logic inWait;
 
   logic [rxWidth-1:0] rxRate;
