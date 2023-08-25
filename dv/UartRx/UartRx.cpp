@@ -1,7 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 #include <NyuTestUtil.hpp>
 
-#include <VUartRx.h>
+#include <VSyncUartRx.h>
+
+using VUartRx = VSyncUartRx;
+
 
 constexpr unsigned Oversample = 16;
 

@@ -46,7 +46,7 @@ module BaudRateGen #(
   end
 
   always @(posedge clk, negedge nReset) begin
-    if(!nReset || syncReset || (txCount == 0)) begin
+    if (!nReset || syncReset || (txCount == 0)) begin
       rxCount <= rxRate - offset - 1;
     end else if (rxCount == 0) begin
       rxCount <= rxRate - 1;

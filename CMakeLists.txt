@@ -20,7 +20,7 @@ add_custom_target(UpdateVcpkgBaseline
   ${VCPKG_ROOT_DIR}/vcpkg x-update-baseline
 )
 
-project(purdnyuart VERSION 2.0.0)
+project(purdnyuart VERSION 2.0.1)
 
 find_package(nyu-cmake CONFIG REQUIRED)
 

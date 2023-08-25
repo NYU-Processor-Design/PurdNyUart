@@ -10,8 +10,8 @@ add_subdirectory(Loopback)
 
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
-  TOP_MODULES BaudRateGen UartRx UartRxEn UartTx UartTxEn
-  ARGS COVERAGE TRACE_FST
+  TOP_MODULES BaudRateGen SyncUartRx SyncUartRxEn UartTx UartTxEn
+  ARGS COVERAGE
 )
 nyu_target_verilate(tests
   TOP_MODULES Loopback_tb

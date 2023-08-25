@@ -22,12 +22,19 @@ module Loopback_tb (
       .*
   );
 
+  logic tx_out;
   logic loopback;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) loopback <= 1;
+    else loopback <= tx_out;
+  end
+
 
   UartTxEn tx (
       .en  (txClk),
       .data(data_tx),
-      .out (loopback),
+      .out (tx_out),
       .done(done_tx),
       .*
   );

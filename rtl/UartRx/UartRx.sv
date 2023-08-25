@@ -30,15 +30,12 @@ module UartRx #(
   logic rise, fall, cmp;
 
   always_ff @(posedge clk, negedge nReset) begin
-    if(!nReset) begin
-      cmp  <= 1;
-      rise <= 0;
-      fall <= 0;
-    end else begin
-      cmp  <= in;
-      rise <= ~cmp & in;
-      fall <= cmp & ~in;
-    end
+    cmp <= !nReset ? 1 : in;
+  end
+
+  always_comb begin
+    rise = in & ~cmp;
+    fall = ~in & cmp;
   end
 
   logic edgeDetect;

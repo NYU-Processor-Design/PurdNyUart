@@ -24,6 +24,7 @@ jobs:
       - name: Test & Generate Coverage
         run: |
           ctest -C Release --output-on-failure
+          sed -i '/\/dv\//d' dv/*.dat
           verilator_coverage -write-info coverage.txt dv/*.dat
 
       - name: Upload Coverage
