@@ -31,7 +31,7 @@ module UartRxEn #(
   logic rise, fall, cmp;
 
   always_ff @(posedge clk, negedge nReset) begin
-    cmp <= !nReset ? 1 : in;
+    cmp <= !nReset ? 1 : en ? in : cmp;
   end
 
   always_comb begin
