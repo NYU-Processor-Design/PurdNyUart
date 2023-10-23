@@ -43,6 +43,8 @@ module UartRxEn #(
   logic badSync;
   logic reSync;
   logic advance;
+  logic badStop;
+  logic fastStart;
 
   logic [sampleWidth-1:0] sampleCount;
   logic [3:0] readCount;
@@ -54,6 +56,8 @@ module UartRxEn #(
     reSync = edgeDetect && (sampleCount < halfSampleCount);
     advance = reSync || (en && (sampleCount == 0));
     done = advance && (readCount == 0);
+    badStop = en && in == 0 && sampleCount == halfSampleCount;
+    fastStart = en && fall && sampleCount < halfSampleCount;
     err = nextState == ERROR;
   end
 
@@ -130,9 +134,9 @@ module UartRxEn #(
       end
 
       STOP:
-      if (badSync || (en && (in == 0) && (sampleCount == halfSampleCount))) begin
+      if (badSync || badStop) begin
         nextState = ERROR;
-      end else if (en && fall && (sampleCount < halfSampleCount)) begin
+      end else if (fastStart) begin
         nextState = START;
       end else if (advance) begin
         nextState = IDLE;

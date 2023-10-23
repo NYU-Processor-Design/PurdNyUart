@@ -42,12 +42,16 @@ module UartRx #(
   logic badSync;
   logic reSync;
   logic advance;
+  logic badStop;
+  logic fastStart;
 
   always_comb begin
     edgeDetect = fall || rise;
     badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
     reSync = edgeDetect && (sampleCount < halfSampleCount);
     advance = reSync || (sampleCount == 0);
+    badStop = in == 0 && sampleCount == halfSampleCount;
+    fastStart = fall && sampleCount < halfSampleCount;
     done = advance && (readCount == 0);
     err = nextState == ERROR;
   end
@@ -129,9 +133,9 @@ module UartRx #(
       end
 
       STOP:
-      if (badSync || (in == 0 && sampleCount == halfSampleCount)) begin
+      if (badSync || badStop) begin
         nextState = ERROR;
-      end else if (fall && sampleCount < halfSampleCount) begin
+      end else if (fastStart) begin
         nextState = START;
       end else if (advance) begin
         nextState = IDLE;
