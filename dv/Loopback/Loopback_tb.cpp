@@ -6,7 +6,7 @@
 
 #include <VLoopback_tb.h>
 
-static void send(VLoopback_tb& lb, std::uint8_t val) {
+static void send(auto& lb, std::uint8_t val) {
   lb.data_tx = val;
   lb.valid = 1;
   nyu::tick(lb);
@@ -14,7 +14,7 @@ static void send(VLoopback_tb& lb, std::uint8_t val) {
 }
 
 TEST_CASE("Loopback_tb") {
-  VLoopback_tb& lb {nyu::getDUT<VLoopback_tb>()};
+  auto& lb {nyu::getDUT<VLoopback_tb>()};
 
   nyu::reset(lb);
 

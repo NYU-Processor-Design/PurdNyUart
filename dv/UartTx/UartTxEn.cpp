@@ -5,12 +5,12 @@
 
 #include <VUartTxEn.h>
 
-static void reset(VUartTxEn& tx) {
+static void reset(auto& tx) {
   tx.en = 1;
   nyu::reset(tx);
 }
 
-static void send(VUartTxEn& tx, std::uint8_t val) {
+static void send(auto& tx, std::uint8_t val) {
   tx.data = val;
   tx.valid = 1;
   nyu::tick(tx);
@@ -18,7 +18,7 @@ static void send(VUartTxEn& tx, std::uint8_t val) {
 }
 
 TEST_CASE("UartTxEn, reset") {
-  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -34,7 +34,7 @@ TEST_CASE("UartTxEn, reset") {
 }
 
 TEST_CASE("UartTxEn, busy/done") {
-  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -55,7 +55,7 @@ TEST_CASE("UartTxEn, busy/done") {
 }
 
 TEST_CASE("UartTxEn, data") {
-  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
 
@@ -88,7 +88,7 @@ TEST_CASE("UartTxEn, data") {
 }
 
 TEST_CASE("UartTxEn, async valid") {
-  VUartTxEn& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::getDUT<VUartTxEn>()};
 
   reset(tx);
   tx.en = 0;

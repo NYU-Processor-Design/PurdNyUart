@@ -8,15 +8,14 @@ using VUartRx = VSyncUartRx;
 
 constexpr unsigned Oversample = 16;
 
-static void start(VUartRx& rx, unsigned ticks = Oversample) {
+static void start(auto& rx, unsigned ticks = Oversample) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
   nyu::tick(rx, ticks);
 }
 
-static void transmit(VUartRx& rx, std::uint8_t val,
-    unsigned ticks = Oversample) {
+static void transmit(auto& rx, std::uint8_t val, unsigned ticks = Oversample) {
   for(unsigned i {0}; i < 8; ++i) {
     rx.in = val & 0x1;
     nyu::tick(rx, ticks);
@@ -24,13 +23,13 @@ static void transmit(VUartRx& rx, std::uint8_t val,
   }
 }
 
-static void start_transmit(VUartRx& rx, std::uint8_t val) {
+static void start_transmit(auto& rx, std::uint8_t val) {
   start(rx);
   transmit(rx, val);
 }
 
 TEST_CASE("UartRx, reset") {
-  VUartRx& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -46,7 +45,7 @@ TEST_CASE("UartRx, reset") {
 }
 
 TEST_CASE("UartRx, done") {
-  VUartRx& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -60,7 +59,7 @@ TEST_CASE("UartRx, done") {
 }
 
 TEST_CASE("UartRx, resync") {
-  VUartRx& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -81,7 +80,7 @@ TEST_CASE("UartRx, resync") {
   REQUIRE(rx.done == 1);
 }
 
-void check_data_error(VUartRx& rx) {
+void check_data_error(auto& rx) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
@@ -94,7 +93,7 @@ void check_data_error(VUartRx& rx) {
 }
 
 TEST_CASE("UartRx, error") {
-  VUartRx& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::getDUT<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -118,7 +117,7 @@ TEST_CASE("UartRx, error") {
 }
 
 TEST_CASE("UartRx, idle") {
-  VUartRx& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::getDUT<VUartRx>()};
   nyu::reset(rx);
 
   start_transmit(rx, 0xAA);

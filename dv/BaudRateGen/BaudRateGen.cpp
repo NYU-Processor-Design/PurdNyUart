@@ -24,7 +24,7 @@ constexpr unsigned txWidth = clog2(txRate);
 constexpr unsigned rxShift = clog2(Oversample);
 constexpr unsigned rxWidth = txWidth - rxShift;
 
-static void reset(VBaudRateGen& rg, int phase = 0, unsigned rate = txRate) {
+static void reset(auto& rg, int phase = 0, unsigned rate = txRate) {
   rg.phase = !!phase;
   rg.rate = rate;
   rg.syncReset = 0;
@@ -32,7 +32,7 @@ static void reset(VBaudRateGen& rg, int phase = 0, unsigned rate = txRate) {
 }
 
 TEST_CASE("BaudRateGen, Reset") {
-  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
+  auto& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg, 0);
 
   REQUIRE(rg.rxClk == 0);
@@ -45,7 +45,7 @@ TEST_CASE("BaudRateGen, Reset") {
 }
 
 TEST_CASE("BaudRateGen, phase") {
-  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
+  auto& rg {nyu::getDUT<VBaudRateGen>()};
   reset(rg);
 
   rg.syncReset = 1;
@@ -65,7 +65,7 @@ TEST_CASE("BaudRateGen, phase") {
 
 
 TEST_CASE("BaudRateGen, rxClk") {
-  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
+  auto& rg {nyu::getDUT<VBaudRateGen>()};
 
   for(unsigned i {2}; i < (1 << rxWidth); i <<= 1) {
     reset(rg, 0, i << rxShift);
@@ -90,7 +90,7 @@ TEST_CASE("BaudRateGen, rxClk") {
 }
 
 TEST_CASE("BaudRateGen, txClk") {
-  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
+  auto& rg {nyu::getDUT<VBaudRateGen>()};
 
   for(unsigned i {2}; i < (1 << txWidth); i <<= 1) {
     reset(rg, 0, i);
@@ -113,7 +113,7 @@ TEST_CASE("BaudRateGen, txClk") {
 }
 
 TEST_CASE("BaudRateGen, rx/tx sync") {
-  VBaudRateGen& rg {nyu::getDUT<VBaudRateGen>()};
+  auto& rg {nyu::getDUT<VBaudRateGen>()};
 
   for(unsigned rate {2 << 4}; rate < 500; rate += 1) {
     reset(rg, 0, rate);

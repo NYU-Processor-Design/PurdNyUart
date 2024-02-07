@@ -9,20 +9,19 @@ using VUartRxEn = VSyncUartRxEn;
 
 constexpr unsigned Oversample = 16;
 
-static void reset(VUartRxEn& rx) {
+static void reset(auto& rx) {
   rx.en = 1;
   nyu::reset(rx);
 }
 
-static void start(VUartRxEn& rx, unsigned ticks = Oversample) {
+static void start(auto& rx, unsigned ticks = Oversample) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
   nyu::tick(rx, ticks);
 }
 
-static void transmit(VUartRxEn& rx, std::uint8_t val,
-    unsigned ticks = Oversample) {
+static void transmit(auto& rx, std::uint8_t val, unsigned ticks = Oversample) {
   for(unsigned i {0}; i < 8; ++i) {
     rx.in = val & 0x1;
     nyu::tick(rx, ticks);
@@ -30,13 +29,13 @@ static void transmit(VUartRxEn& rx, std::uint8_t val,
   }
 }
 
-static void start_transmit(VUartRxEn& rx, std::uint8_t val) {
+static void start_transmit(auto& rx, std::uint8_t val) {
   start(rx);
   transmit(rx, val);
 }
 
 TEST_CASE("UartRxEn, reset") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
 
   reset(rx);
 
@@ -52,7 +51,7 @@ TEST_CASE("UartRxEn, reset") {
 }
 
 TEST_CASE("UartRxEn, done") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
 
   reset(rx);
 
@@ -66,7 +65,7 @@ TEST_CASE("UartRxEn, done") {
 }
 
 TEST_CASE("UartRxEn, enable off") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
 
   reset(rx);
   rx.en = 0;
@@ -79,7 +78,7 @@ TEST_CASE("UartRxEn, enable off") {
 }
 
 TEST_CASE("UartRxEn, resync") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
 
   reset(rx);
 
@@ -100,7 +99,7 @@ TEST_CASE("UartRxEn, resync") {
   REQUIRE(rx.done == 1);
 }
 
-void check_data_error(VUartRxEn& rx) {
+void check_data_error(auto& rx) {
   rx.in = 1;
   nyu::tick(rx);
   rx.in = 0;
@@ -113,7 +112,7 @@ void check_data_error(VUartRxEn& rx) {
 }
 
 TEST_CASE("UartRxEn, error") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
 
   reset(rx);
 
@@ -137,7 +136,7 @@ TEST_CASE("UartRxEn, error") {
 }
 
 TEST_CASE("UartRxEn, idle") {
-  VUartRxEn& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::getDUT<VUartRxEn>()};
   reset(rx);
 
   start_transmit(rx, 0xAA);
