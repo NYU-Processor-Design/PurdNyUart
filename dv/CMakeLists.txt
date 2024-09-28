@@ -12,6 +12,7 @@ nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
   TOP_MODULES BaudRateGen SyncUartRx SyncUartRxEn UartTx UartTxEn
   ARGS COVERAGE
+  VERILATOR_ARGS -fno-table
 )
 nyu_target_verilate(tests
   TOP_MODULES Loopback_tb
