@@ -19,7 +19,7 @@ endif()
 
 include(cmake/BootstrapVcpkg.cmake)
 
-project(purdnyuart VERSION 2.0.2)
+project(purdnyuart VERSION 2.0.3)
 
 find_package(nyu-cmake CONFIG REQUIRED)
 
