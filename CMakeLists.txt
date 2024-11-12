@@ -1,5 +1,22 @@
 cmake_minimum_required(VERSION 3.27)
 
+option(NYU_SKIP_VCPKG "Do not fetch vcpkg" OFF)
+option(NYU_BUILD_TESTS "Generate tests" OFF)
+option(NYU_GEN_TRACES "Generate FST traces from tests" OFF)
+option(NYU_GEN_COV "Generate coverage information from tests" OFF)
+
+if(NYU_GEN_TRACES)
+  set(_traces_option TRACE_FST)
+else()
+  set(_traces_option)
+endif()
+
+if(NYU_GEN_COV)
+  set(_cov_option COVERAGE)
+else()
+  set(_cov_option)
+endif()
+
 include(cmake/BootstrapVcpkg.cmake)
 
 project(purdnyuart VERSION 2.0.2)

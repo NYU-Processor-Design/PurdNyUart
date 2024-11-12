@@ -11,15 +11,21 @@ add_subdirectory(Loopback)
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
   TOP_MODULES BaudRateGen SyncUartRx SyncUartRxEn UartTx UartTxEn
-  ARGS COVERAGE
+  ARGS 
+    ${_cov_option} 
+    ${_traces_option}
   VERILATOR_ARGS -fno-table
 )
 nyu_target_verilate(tests
   TOP_MODULES Loopback_tb
 )
+
+if(NYU_GEN_COV)
+  target_link_libraries(tests PRIVATE nyu::covrecorder)
+endif()
+
 target_link_libraries(tests PRIVATE
   Catch2::Catch2WithMain
-  nyu::covrecorder
   nyu::testutil
 )
 target_compile_features(tests PRIVATE cxx_std_23)
