@@ -36,7 +36,7 @@ module BaudRateGen #(
     rxRate    = rate[txWidth-1:rxShift];
     offset    = rxRate - ((rxRate >> 1) + 1);
 
-    totalWait = rate - {rxRate, 4'b0};
+    totalWait = txWidth'(rate[rxShift-1:0]);
     preWait   = rate - (totalWait >> 1);
     postWait  = rate - preWait + txWidth'(rate[0]) + txWidth'(offset);
     inWait    = txCount > preWait || txCount < postWait;
