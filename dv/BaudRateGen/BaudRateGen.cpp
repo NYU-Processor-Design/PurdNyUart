@@ -29,7 +29,7 @@ template <typename Dut, typename Phase = int, typename Rate = decltype(txRate),
     typename SyncReset = int>
 requires can_phase_reset<Dut, Phase, Rate, SyncReset> &&
     nyu::reset_default_ok<Dut>
-inline void tag_invoke(nyu::reset_t, Dut& dut, Phase phase = 0,
+void tag_invoke(nyu::reset_t, Dut& dut, Phase phase = 0,
     Rate rate =
         txRate) noexcept(nothrow_can_phase_reset<Dut, Phase, Rate, SyncReset> &&
     nyu::nothrow_reset_default_ok<Dut>) {
