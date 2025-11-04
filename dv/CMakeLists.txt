@@ -19,7 +19,6 @@ nyu_target_verilate(tests
   ARGS
     ${_cov_option}
     ${_traces_option}
-  VERILATOR_ARGS -fno-table
 )
 nyu_target_verilate(tests
   TOP_MODULES Loopback_tb
