@@ -1,32 +1,10 @@
 #include <catch2/catch_test_macros.hpp>
 #include <NyuCatch2TestUtil.hpp>
 
+#include <TestHelpers.hpp>
 #include <VSyncUartRx.h>
 
 using VUartRx = VSyncUartRx;
-
-
-constexpr unsigned Oversample = 16;
-
-static void start(auto& rx, unsigned ticks = Oversample) {
-  rx.in = 1;
-  nyu::tick(rx);
-  rx.in = 0;
-  nyu::tick(rx, ticks);
-}
-
-static void transmit(auto& rx, std::uint8_t val, unsigned ticks = Oversample) {
-  for(unsigned i {0}; i < 8; ++i) {
-    rx.in = val & 0x1;
-    nyu::tick(rx, ticks);
-    val >>= 1;
-  }
-}
-
-static void start_transmit(auto& rx, std::uint8_t val) {
-  start(rx);
-  transmit(rx, val);
-}
 
 TEST_CASE("UartRx, reset") {
   auto& rx {nyu::get_dut_catch2<VUartRx>()};

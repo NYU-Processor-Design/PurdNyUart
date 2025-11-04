@@ -6,39 +6,6 @@
 #include <TestHelpers.hpp>
 #include <VBaudRateGen.h>
 
-static constexpr unsigned flog2(unsigned x) {
-  return x == 1 ? 0 : flog2(x >> 1) + 1;
-}
-
-static constexpr unsigned clog2(unsigned x) {
-  return x == 1 ? 0 : flog2(x - 1) + 1;
-}
-
-constexpr unsigned MaxClockRate = 100 * 1000000;
-constexpr unsigned MinBaudRate = 9600;
-constexpr unsigned Oversample = 16;
-
-constexpr unsigned rxRate = MaxClockRate / (MinBaudRate * Oversample);
-constexpr unsigned txRate = MaxClockRate / MinBaudRate;
-
-constexpr unsigned txWidth = clog2(txRate);
-constexpr unsigned rxShift = clog2(Oversample);
-constexpr unsigned rxWidth = txWidth - rxShift;
-
-template <typename Dut, typename Phase = int, typename Rate = decltype(txRate),
-    typename SyncReset = int>
-requires can_phase_reset<Dut, Phase, Rate, SyncReset> &&
-    nyu::reset_default_ok<Dut>
-void tag_invoke(nyu::reset_t, Dut& dut, Phase phase = 0,
-    Rate rate =
-        txRate) noexcept(nothrow_can_phase_reset<Dut, Phase, Rate, SyncReset> &&
-    nyu::nothrow_reset_default_ok<Dut>) {
-  dut.phase = static_cast<bool>(phase);
-  dut.rate = rate;
-  dut.syncReset = SyncReset {0};
-  nyu::reset_default(dut);
-}
-
 TEST_CASE("BaudRateGen, Reset") {
   auto& rg {nyu::get_dut_catch2<VBaudRateGen>()};
   nyu::reset(rg, 0);
