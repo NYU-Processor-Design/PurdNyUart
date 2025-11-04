@@ -3,15 +3,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <NyuCatch2TestUtil.hpp>
 
+#include <TestHelpers.hpp>
 #include <VUartTx.h>
-
-static void send(VUartTx& tx, std::uint8_t val) {
-  tx.data = val;
-  tx.valid = 1;
-  nyu::tick(tx);
-  tx.valid = 0;
-}
-
 
 TEST_CASE("UartTx, reset") {
   auto& tx {nyu::get_dut_catch2<VUartTx>()};

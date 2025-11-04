@@ -6,13 +6,6 @@
 #include <TestHelpers.hpp>
 #include <VUartTxEn.h>
 
-static void send(auto& tx, std::uint8_t val) {
-  tx.data = val;
-  tx.valid = 1;
-  nyu::tick(tx);
-  tx.valid = 0;
-}
-
 TEST_CASE("UartTxEn, reset") {
   auto& tx {nyu::get_dut_catch2<VUartTxEn>()};
 
