@@ -1,7 +1,7 @@
 #include <cstdint>
 
 #include <catch2/catch_test_macros.hpp>
-#include <NyuTestUtil.hpp>
+#include <NyuCatch2TestUtil.hpp>
 
 #include <VUartTx.h>
 
@@ -14,7 +14,7 @@ static void send(VUartTx& tx, std::uint8_t val) {
 
 
 TEST_CASE("UartTx, reset") {
-  auto& tx {nyu::getDUT<VUartTx>()};
+  auto& tx {nyu::get_dut_catch2<VUartTx>()};
 
   nyu::reset(tx);
 
@@ -30,7 +30,7 @@ TEST_CASE("UartTx, reset") {
 }
 
 TEST_CASE("UartTx, busy/done") {
-  auto& tx {nyu::getDUT<VUartTx>()};
+  auto& tx {nyu::get_dut_catch2<VUartTx>()};
 
   nyu::reset(tx);
 
@@ -51,7 +51,7 @@ TEST_CASE("UartTx, busy/done") {
 }
 
 TEST_CASE("UartTx, data") {
-  auto& tx {nyu::getDUT<VUartTx>()};
+  auto& tx {nyu::get_dut_catch2<VUartTx>()};
 
   nyu::reset(tx);
 

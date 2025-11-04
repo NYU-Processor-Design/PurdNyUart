@@ -2,7 +2,7 @@
 #include <cstdint>
 
 #include <catch2/catch_test_macros.hpp>
-#include <NyuTestUtil.hpp>
+#include <NyuCatch2TestUtil.hpp>
 
 #include <VLoopback_tb.h>
 
@@ -14,7 +14,7 @@ static void send(auto& lb, std::uint8_t val) {
 }
 
 TEST_CASE("Loopback_tb") {
-  auto& lb {nyu::getDUT<VLoopback_tb>()};
+  auto& lb {nyu::get_dut_catch2<VLoopback_tb>()};
 
   nyu::reset(lb);
 

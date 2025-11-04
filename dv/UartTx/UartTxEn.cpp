@@ -1,14 +1,10 @@
 #include <cstdint>
 
 #include <catch2/catch_test_macros.hpp>
-#include <NyuTestUtil.hpp>
+#include <NyuCatch2TestUtil.hpp>
 
+#include <TestHelpers.hpp>
 #include <VUartTxEn.h>
-
-static void reset(auto& tx) {
-  tx.en = 1;
-  nyu::reset(tx);
-}
 
 static void send(auto& tx, std::uint8_t val) {
   tx.data = val;
@@ -18,25 +14,25 @@ static void send(auto& tx, std::uint8_t val) {
 }
 
 TEST_CASE("UartTxEn, reset") {
-  auto& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::get_dut_catch2<VUartTxEn>()};
 
-  reset(tx);
+  nyu::reset(tx);
 
   tx.valid = 1;
   nyu::tick(tx);
 
   REQUIRE(tx.busy == 1);
 
-  reset(tx);
+  nyu::reset(tx);
 
   REQUIRE(tx.out == 1);
   REQUIRE(tx.busy == 0);
 }
 
 TEST_CASE("UartTxEn, busy/done") {
-  auto& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::get_dut_catch2<VUartTxEn>()};
 
-  reset(tx);
+  nyu::reset(tx);
 
   send(tx, 0xFF);
 
@@ -55,9 +51,9 @@ TEST_CASE("UartTxEn, busy/done") {
 }
 
 TEST_CASE("UartTxEn, data") {
-  auto& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::get_dut_catch2<VUartTxEn>()};
 
-  reset(tx);
+  nyu::reset(tx);
 
   send(tx, 0xAA);
   REQUIRE(tx.out == 0);
@@ -88,9 +84,9 @@ TEST_CASE("UartTxEn, data") {
 }
 
 TEST_CASE("UartTxEn, async valid") {
-  auto& tx {nyu::getDUT<VUartTxEn>()};
+  auto& tx {nyu::get_dut_catch2<VUartTxEn>()};
 
-  reset(tx);
+  nyu::reset(tx);
   tx.en = 0;
   send(tx, 0);
   REQUIRE(tx.busy == 0);

@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include <NyuTestUtil.hpp>
+#include <NyuCatch2TestUtil.hpp>
 
 #include <VSyncUartRx.h>
 
@@ -29,7 +29,7 @@ static void start_transmit(auto& rx, std::uint8_t val) {
 }
 
 TEST_CASE("UartRx, reset") {
-  auto& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::get_dut_catch2<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -45,7 +45,7 @@ TEST_CASE("UartRx, reset") {
 }
 
 TEST_CASE("UartRx, done") {
-  auto& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::get_dut_catch2<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -59,7 +59,7 @@ TEST_CASE("UartRx, done") {
 }
 
 TEST_CASE("UartRx, resync") {
-  auto& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::get_dut_catch2<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -93,7 +93,7 @@ void check_data_error(auto& rx) {
 }
 
 TEST_CASE("UartRx, error") {
-  auto& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::get_dut_catch2<VUartRx>()};
 
   nyu::reset(rx);
 
@@ -117,7 +117,7 @@ TEST_CASE("UartRx, error") {
 }
 
 TEST_CASE("UartRx, idle") {
-  auto& rx {nyu::getDUT<VUartRx>()};
+  auto& rx {nyu::get_dut_catch2<VUartRx>()};
   nyu::reset(rx);
 
   start_transmit(rx, 0xAA);

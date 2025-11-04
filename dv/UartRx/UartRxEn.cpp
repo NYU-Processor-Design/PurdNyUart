@@ -1,18 +1,14 @@
 #include <cstdint>
 
 #include <catch2/catch_test_macros.hpp>
-#include <NyuTestUtil.hpp>
+#include <NyuCatch2TestUtil.hpp>
 
+#include <TestHelpers.hpp>
 #include <VSyncUartRxEn.h>
 
 using VUartRxEn = VSyncUartRxEn;
 
 constexpr unsigned Oversample = 16;
-
-static void reset(auto& rx) {
-  rx.en = 1;
-  nyu::reset(rx);
-}
 
 static void start(auto& rx, unsigned ticks = Oversample) {
   rx.in = 1;
@@ -35,9 +31,9 @@ static void start_transmit(auto& rx, std::uint8_t val) {
 }
 
 TEST_CASE("UartRxEn, reset") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
 
-  reset(rx);
+  nyu::reset(rx);
 
   start_transmit(rx, 0xFF);
 
@@ -45,15 +41,15 @@ TEST_CASE("UartRxEn, reset") {
 
   REQUIRE(rx.data == 0xFF);
 
-  reset(rx);
+  nyu::reset(rx);
 
   REQUIRE(rx.data == 0x00);
 }
 
 TEST_CASE("UartRxEn, done") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
 
-  reset(rx);
+  nyu::reset(rx);
 
   start_transmit(rx, 0);
   rx.in = 1;
@@ -65,9 +61,9 @@ TEST_CASE("UartRxEn, done") {
 }
 
 TEST_CASE("UartRxEn, enable off") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
 
-  reset(rx);
+  nyu::reset(rx);
   rx.en = 0;
 
   start_transmit(rx, 0xFF);
@@ -78,9 +74,9 @@ TEST_CASE("UartRxEn, enable off") {
 }
 
 TEST_CASE("UartRxEn, resync") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
 
-  reset(rx);
+  nyu::reset(rx);
 
   start(rx, 14);
   transmit(rx, 0xAA, 13);
@@ -112,9 +108,9 @@ void check_data_error(auto& rx) {
 }
 
 TEST_CASE("UartRxEn, error") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
 
-  reset(rx);
+  nyu::reset(rx);
 
   start(rx, 1);
 
@@ -136,8 +132,8 @@ TEST_CASE("UartRxEn, error") {
 }
 
 TEST_CASE("UartRxEn, idle") {
-  auto& rx {nyu::getDUT<VUartRxEn>()};
-  reset(rx);
+  auto& rx {nyu::get_dut_catch2<VUartRxEn>()};
+  nyu::reset(rx);
 
   start_transmit(rx, 0xAA);
   nyu::tick(rx, Oversample + 1);

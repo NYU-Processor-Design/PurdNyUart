@@ -3,6 +3,11 @@ find_package(nyu-util REQUIRED CONFIG)
 
 add_executable(tests)
 
+target_sources(tests
+  PRIVATE
+    FILE_SET HEADERS
+)
+
 add_subdirectory(BaudRateGen)
 add_subdirectory(UartRx)
 add_subdirectory(UartTx)
@@ -11,8 +16,8 @@ add_subdirectory(Loopback)
 nyu_link_sv(tests PRIVATE uart)
 nyu_target_verilate(tests
   TOP_MODULES BaudRateGen SyncUartRx SyncUartRxEn UartTx UartTxEn
-  ARGS 
-    ${_cov_option} 
+  ARGS
+    ${_cov_option}
     ${_traces_option}
   VERILATOR_ARGS -fno-table
 )
