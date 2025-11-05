@@ -1,5 +1,9 @@
 name: Verilator-Test
 
+permissions:
+  actions: read
+  contents: read
+
 on: [push, pull_request]
 
 jobs:
@@ -15,21 +19,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure
-        run: cmake . -G Ninja -DCMAKE_BUILD_TYPE=Release -DVCPKG_BUILD_TYPE=release -DNYU_BUILD_TESTS=ON -DNYU_GEN_COV=ON
+      - name: Restore vcpkg cache
+        id: vcpkg-cache
+        uses: TAServers/vcpkg-cache@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
-        run: cmake --build .
+        env:
+          VCPKG_FEATURE_FLAGS: "binarycaching"
+          VCPKG_BINARY_SOURCES: "clear;files,${{ steps.vcpkg-cache.outputs.path }},readwrite"
+        run: |
+          cmake -G Ninja -B build      \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DVCPKG_BUILD_TYPE=release \
+            -DNYU_BUILD_TESTS=ON       \
+            -DNYU_GEN_COV=ON
+          cmake --build build
 
       - name: Test & Generate Coverage
         run: |
-          ctest -C Release --output-on-failure
-          sed -i -e '/\/share\//d' -e '/\/dv\//d' dv/*.dat
-          verilator_coverage -write-info coverage.txt dv/*.dat
+          ctest --test-dir build --output-on-failure
+          sed -i -e '/\/share\//d' -e '/\/dv\//d' build/dv/*.dat
+          verilator_coverage -write-info coverage.txt build/dv/*.dat
 
       - name: Upload Coverage
         uses: codecov/codecov-action@v4
         with:
-          files: ./coverage.txt
+          files: coverage.txt
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
