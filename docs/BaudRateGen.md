@@ -50,10 +50,11 @@ will be evenly spaced within the `txClk` period, with the goal of the
 `[Oversample / 2]`<sup>th</sup> edge being directly in the center of the
 `txClk` period.
 
-This is achieved with two "wait" zones, the `preWait` zone and the `postWait`
-zone, which account for the indivisble remainder of the `rate` divided by the
-`Oversample`. Each wait zone is about half of the remainder.
+The `rxClk` is kept synchronized with the `txClk` via two "wait" zones, the
+`preWait` zone and the `postWait` zone, which account for the indivisble
+remainder of the `rate` divided by the `Oversample`. Each wait zone is about
+half of the remainder.
 
-Additionally, the `rxClk` is shifted a half-period (ie, `rxRate / 2`) left
-within the overall `txClk` period, to further center the sampling. This shift is
+Additionally, the `rxClk` is shifted a half-period (ie, `rxRate / 2`) within
+the overall `txClk` period, to further center the sampling. This shift is
 referred to as the `offset` within the rate calculations.

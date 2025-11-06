@@ -1,6 +1,6 @@
 # UART Receiver
 
-The PurdNyUart receiver is a finite state machine that implements an 8-N-1 UART
+The PurdNyUart receiver is a finite state machine implementing an 8-N-1 UART
 protocol with some synchronization and error detection features.
 
 ## Contents
@@ -64,7 +64,7 @@ The important constants are as follows:
 |       Name        |         Value          |              Description              |
 |       :--:        |         :---:          |              :---------:              |
 | `fullSampleCount` | `Oversample - 1`       | Total number of samples in a state    |
-| `fullSampleCount` | `(Oversample / 2) - 1` | Half the number of samples in a state |
+| `halfSampleCount` | `Oversample / 2`       | Half the number of samples in a state |
 
 ### Control Signals
 
@@ -75,10 +75,12 @@ The important control signals are as follows:
 | `edgeDetect`  |      `fall \|\| rise`    | An edge transition occurred in input             |
 | `edgeCmp`     |        Set by FSM        | An edge transition previously occurred in current state |
 | `sampleCount` |        Set by FSM        | Number of samples remaining in current state     |
-| `readCount`   |  Set by FSM  | Number of bits left to read in current state (**Data** only) |
+| `readCount`   |        Set by FSM        | Number of bits left to read in current state (**Data** only) |
 | `badSync`     | `edgeDetect && edgeCmp && (sampleCount >= halfSampleCount)` | Synchronization error  |
 | `reSync`      | `edgeDetect && (sampleCount < halfSampleCount)` | Synchronization correction |
 | `advance`     | `reSync \|\| (sampleCount == 0)` | Advance to next state                    |
+| `badStop`     | `in == 0 && sampleCount == halfSampleCount` | Stop bit not set |
+| `fastStart`   | `fall && sampleCount < halfSampleCount` | Advance to start immediately from stop |
 
 ### Complete FSM Diagram
 
@@ -97,7 +99,7 @@ graph LR;
   Data_B--advance && readCount > 0 -->Data_A;
   Data_B--advance && readCount == 0 -->Stop;
 
-  Stop--"badSync || (syncOut == 0 && sampleCount == halfSampleCount)"-->Error;
+  Stop--"badSync || badStop"-->Error;
   Stop--fall && sampleCount < halfSampleCount-->Start;
   Stop--advance-->Idle;
 
