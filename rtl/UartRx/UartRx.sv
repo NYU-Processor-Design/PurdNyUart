@@ -71,7 +71,7 @@ module UartRx #(
         edgeCmp     <= edgeDetect;
         sampleCount <= fullSampleCount;
       end else begin
-        edgeCmp     <= edgeDetect ? edgeDetect : edgeCmp;
+        edgeCmp     <= edgeDetect || edgeCmp;
         sampleCount <= sampleCount - 1;
       end
     end
